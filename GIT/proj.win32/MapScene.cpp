@@ -23,24 +23,38 @@ bool MapScene::init()
 
 
 	//µØÍ¼
-	auto MAP = Sprite::create("HelloWorld.png");
+	auto MAP = Sprite::create("map.jpg");
 	MAP->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
-	MAP->setScale(1.0f);
+
+	MAP->setScale(3.0f);
 	addChild(MAP, 0);
 
 	//²âÊÔ°´Å¥
-	auto labelBack = Label::createWithTTF("BACK", "fonts/Marker Felt.ttf", 24);
-	auto pBackButtonItem = MenuItemImage::create("Exitbutton.jpg", "Exitbutton.jpg", CC_CALLBACK_1(MapScene::EnterHelloWorldScene, this));
+	auto pBackButtonItem = MenuItemImage::create("Backbutton.png", "Backbutton.png", CC_CALLBACK_1(MapScene::EnterHelloWorldScene, this));
 	auto BackButton = Menu::create(pBackButtonItem,NULL);
-	BackButton->setPosition(Vec2(origin.x + visibleSize.width /2.0, origin.y + visibleSize.height / 4.0-labelBack->getContentSize().height));
-	labelBack->setPosition(Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height / 4.0 - labelBack->getContentSize().height));
+	BackButton->setPosition(Vec2(80,visibleSize.height-30));
 	addChild(BackButton, 1);
-	addChild(labelBack, 2);
 
+	hero = new heroPrint();
+	hero->initHeroSprite( 8, Vec2(860,540));
+	addChild(hero);
+
+	
+	auto dispatcher = Director::getInstance()->getEventDispatcher();
+	auto listener = EventListenerTouchOneByOne::create();
+	listener->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
+	dispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 	return true;
 }
+bool MapScene::onTouchBegan(Touch *touch, Event *unused_event)
+{
+	hero->getDirection(hero->currentPosition, touch->getLocation());
+	hero->heroMoveTo(touch->getLocation());
+	return false;
+}
+
 
 void MapScene::EnterHelloWorldScene(Ref *pSenderBack)
 {
-	Director::getInstance()->replaceScene(TransitionRotoZoom::create(1.0f,HelloWorld::createScene()));
+	Director::getInstance()->replaceScene((HelloWorld::createScene()));
 }

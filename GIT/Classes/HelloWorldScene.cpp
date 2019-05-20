@@ -54,7 +54,7 @@ bool HelloWorld::init()
 //跳转到MAP
 void HelloWorld::EnterMapScene(Ref *pSender)
 {
-	Director::getInstance()->replaceScene(TransitionRotoZoom::create(1.0f,MapScene::createScene()));
+	Director::getInstance()->replaceScene((MapScene::createScene()));
 }
 
 //关闭游戏
