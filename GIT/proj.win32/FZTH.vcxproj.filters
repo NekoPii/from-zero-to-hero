@@ -24,6 +24,9 @@
     <ClCompile Include="MapScene.cpp">
       <Filter>resource\src</Filter>
     </ClCompile>
+    <ClCompile Include="heroPrint.cpp">
+      <Filter>resource\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -36,6 +39,9 @@
       <Filter>resource\src</Filter>
     </ClInclude>
     <ClInclude Include="MapScene.h">
+      <Filter>resource\src</Filter>
+    </ClInclude>
+    <ClInclude Include="heroPrint.h">
       <Filter>resource\src</Filter>
     </ClInclude>
   </ItemGroup>
