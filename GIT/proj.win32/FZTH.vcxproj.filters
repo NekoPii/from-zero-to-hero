@@ -27,6 +27,18 @@
     <ClCompile Include="heroPrint.cpp">
       <Filter>resource\src</Filter>
     </ClCompile>
+    <ClCompile Include="HeroChoose.cpp">
+      <Filter>resource\src</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroMakeSure1.cpp">
+      <Filter>resource\src</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroMakeSure2.cpp">
+      <Filter>resource\src</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroMakeSure3.cpp">
+      <Filter>resource\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -44,6 +56,19 @@
     <ClInclude Include="heroPrint.h">
       <Filter>resource\src</Filter>
     </ClInclude>
+    <ClInclude Include="HeroChoose.h">
+      <Filter>resource\src</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroMakeSure1.h">
+      <Filter>resource\src</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroMakeSure2.h">
+      <Filter>resource\src</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroMakeSure3.h">
+      <Filter>resource\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GLOBAL.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

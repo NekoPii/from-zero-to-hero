@@ -1,5 +1,10 @@
 #include "proj.win32/MapScene.h"
+#include "proj.win32/HeroMakeSure1.h"
+#include "proj.win32/HeroMakeSure2.h"
+#include "proj.win32/HeroMakeSure3.h"
 #include "HelloWorldScene.h"
+#include "GLOBAL.h"
+
 
 USING_NS_CC;
 
@@ -21,7 +26,6 @@ bool MapScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-
 	//µØÍ¼
 	auto MAP = Sprite::create("map.jpg");
 	MAP->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
@@ -36,9 +40,8 @@ bool MapScene::init()
 	addChild(BackButton, 1);
 
 	hero = new heroPrint();
-	hero->initHeroSprite( 8, Vec2(860,540));
+	hero->initHeroSprite(8, Vec2(860, 540));
 	addChild(hero);
-
 	
 	auto dispatcher = Director::getInstance()->getEventDispatcher();
 	auto listener = EventListenerTouchOneByOne::create();

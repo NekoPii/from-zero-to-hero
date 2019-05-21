@@ -1,5 +1,8 @@
 #include "HelloWorldScene.h"
-#include "proj.win32/MapScene.h"
+#include "proj.win32/HeroChoose.h"
+#include "GLOBAL.h"
+
+std::string HeroID = "0";
 
 
 USING_NS_CC;
@@ -25,7 +28,7 @@ bool HelloWorld::init()
 
 	//StartButton
     auto labelStart = Label::createWithTTF("START", "fonts/Marker Felt.ttf", 24);
-	auto pStartButtonItem = MenuItemImage::create("Startbutton.jpg", "Startbutton.jpg",CC_CALLBACK_1(HelloWorld::EnterMapScene, this));
+	auto pStartButtonItem = MenuItemImage::create("Startbutton.jpg", "Startbutton.jpg",CC_CALLBACK_1(HelloWorld::EnterHeroChooseScene, this));
 	auto StartButton = Menu::create(pStartButtonItem, NULL);
 	StartButton->setPosition(Vec2(origin.x + 2.0*visibleSize.width / 3.0, origin.y + visibleSize.height / 4.0 - labelStart->getContentSize().height));
 	labelStart->setPosition(Vec2(origin.x + 2.0*visibleSize.width / 3.0, origin.y + visibleSize.height / 4.0 - labelStart->getContentSize().height));
@@ -51,10 +54,10 @@ bool HelloWorld::init()
 }
 
 
-//跳转到MAP
-void HelloWorld::EnterMapScene(Ref *pSender)
+//跳转到HeroChoose
+void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 {
-	Director::getInstance()->replaceScene((MapScene::createScene()));
+	Director::getInstance()->replaceScene((HeroChoose::createScene()));
 }
 
 //关闭游戏

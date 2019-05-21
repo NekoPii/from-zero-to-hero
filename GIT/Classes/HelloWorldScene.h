@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 
+
 class HelloWorld : public cocos2d::Layer
 {
 public:
@@ -10,9 +11,10 @@ public:
 
     virtual bool init();
     
-	void EnterMapScene(Ref *pSenderEnter);
+	void EnterHeroChooseScene(Ref *pSenderEnter);
 
     void CloseGame(cocos2d::Ref* pSenderClose);
+
     
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
