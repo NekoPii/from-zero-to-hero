@@ -12,8 +12,6 @@ public:
 	void heroMoveTo(cocos2d::Point final);
 	int getDirection(cocos2d::Point start, cocos2d::Point final);
 	float getDistance(cocos2d::Point start, cocos2d::Point final);
-	float getDistance_x(cocos2d::Point start, cocos2d::Point final);
-	float getDistance_y(cocos2d::Point start, cocos2d::Point final);
 	Point heroPrint::herosPosition();
 	cocos2d::Animate* createAnimate(int direction, const char *action, int num);
 	void heroResume();

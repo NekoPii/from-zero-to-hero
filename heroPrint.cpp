@@ -79,20 +79,9 @@ float heroPrint::getDistance(cocos2d::Point pos1, cocos2d::Point pos2)
 	float y = pos1.y - pos2.y;
 	return sqrt(x*x + y * y);
 }
-float heroPrint::getDistance_x(cocos2d::Point pos1, cocos2d::Point pos2)
-{
-	float x = pos1.x - pos2.x;
-	return x;
-}
-float heroPrint::getDistance_y(cocos2d::Point pos1, cocos2d::Point pos2)
-{
-	float y = pos1.y - pos2.y;
-	return y;
-}
 
 void heroPrint::heroMoveTo(cocos2d::Point position)
 {
-	//Point PPP(960, 540);
 	heroSprite->stopAllActions();
 	this->currentPosition = heroSprite->getPosition();
 	float distance = getDistance(this->currentPosition, position);
@@ -102,8 +91,6 @@ void heroPrint::heroMoveTo(cocos2d::Point position)
 	auto* sequence = Sequence::create(move, callFunc, NULL);
 	heroSprite->runAction(animate);
 	heroSprite->runAction(sequence);
-	Vec2 hero_position = heroSprite->getPosition();
-	CCLOG("%f     %f", currentPosition.x, currentPosition.y);
 }
 Point heroPrint::herosPosition()
 {
