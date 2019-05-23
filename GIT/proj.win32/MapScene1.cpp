@@ -26,7 +26,7 @@ bool MapScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	//地图
+	//鍦板浘
 	auto MAP = Sprite::create("map.jpg");
 	MAP->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
 	MAP->setScale(3.0f);
@@ -36,7 +36,7 @@ bool MapScene::init()
 	layer1->addChild(MAP);
 	this->addChild(layer1, 0, 1);
 
-	//测试按钮
+	//娴嬭瘯鎸夐挳
 	auto pBackButtonItem = MenuItemImage::create("Backbutton.png", "Backbutton.png", CC_CALLBACK_1(MapScene::EnterHelloWorldScene, this));
 	auto BackButton = Menu::create(pBackButtonItem,NULL);
 	BackButton->setPosition(Vec2(80,visibleSize.height-30));
@@ -67,21 +67,21 @@ void MapScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 	Vec2 layer_position = layer1->getPosition();
 	CCLOG("%f %f", layer_position.x, layer_position.y);
 	if (keycode == EventKeyboard::KeyCode::KEY_UP_ARROW) {
-		CCLOG("按下上键");
+		CCLOG("鎸変笅涓婇敭");
 		if (layer_position.y <= -1600)
 		{return; }
 		hero->heroSprite->setPosition(Vec2(hero_position.x, hero_position.y - 100));
 		layer1->setPosition(Vec2(layer_position.x, layer_position.y - 100));
 	}
 	else if (keycode == EventKeyboard::KeyCode::KEY_LEFT_ARROW) {
-		CCLOG("按下左键");
+		CCLOG("鎸変笅宸﹂敭");
 		if (layer_position.x >= 2300)
 		{return;}
 		hero->heroSprite->setPosition(Vec2(hero_position.x + 100, hero_position.y));
 		layer1->setPosition(Vec2(layer_position.x + 100, layer_position.y));
 	}
 	else if (keycode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW) {
-		CCLOG("按下右键");
+		CCLOG("鎸変笅鍙抽敭");
 		if (layer_position.x <= -2300)
 		{return;}
 		hero->heroSprite->setPosition(Vec2(hero_position.x - 100, hero_position.y));
@@ -92,7 +92,7 @@ void MapScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 		{return;}
 		hero->heroSprite->setPosition(Vec2(hero_position.x, hero_position.y + 100));
 		layer1->setPosition(Vec2(layer_position.x, layer_position.y + 100));
-		CCLOG("按下下键");
+		CCLOG("鎸変笅涓嬮敭");
 	}
 }
 
