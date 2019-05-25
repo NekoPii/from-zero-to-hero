@@ -37,9 +37,10 @@ bool MapScene::init()
 	this->addChild(layer1, 0, 1);
 
 	//测试按钮
+
 	auto pBackButtonItem = MenuItemImage::create("Backbutton.png", "Backbutton.png", CC_CALLBACK_1(MapScene::EnterHelloWorldScene, this));
-	auto BackButton = Menu::create(pBackButtonItem,NULL);
-	BackButton->setPosition(Vec2(80,visibleSize.height-30));
+	auto BackButton = Menu::create(pBackButtonItem, NULL);
+	BackButton->setPosition(Vec2(80, visibleSize.height - 30));
 	addChild(BackButton, 1);
 
 	hero = new heroPrint();

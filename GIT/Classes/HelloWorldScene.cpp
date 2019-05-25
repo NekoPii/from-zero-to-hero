@@ -2,7 +2,7 @@
 #include "proj.win32/HeroChoose.h"
 #include "GLOBAL.h"
 
-std::string HeroID = "0";
+int HeroID = 0;
 
 USING_NS_CC;
 

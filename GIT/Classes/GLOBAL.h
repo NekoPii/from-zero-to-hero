@@ -1,2 +1,2 @@
 #pragma once
-extern std::string HeroID;
+extern int HeroID;

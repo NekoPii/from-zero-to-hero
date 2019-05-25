@@ -64,7 +64,7 @@ bool HeroMakeSure2::init()
 
 void HeroMakeSure2::EnterMapScene(Ref *pSenderEnter)
 {
-	HeroID = "2";
+	HeroID = 2;
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,MapScene::createScene()));
 }
 
@@ -78,7 +78,7 @@ void HeroMakeSure2::initHero2Stand()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	auto heroSpriteStand2 = Sprite::create("hero_2_stand5.png");
+	auto heroSpriteStand2 = Sprite::create("hero_2_stand51.png");
 	heroSpriteStand2->setScale(4.0f);
 	heroSpriteStand2->setPosition(Vec2(origin.x + visibleSize.width / 3.0, origin.y + visibleSize.height / 2.0));
 	addChild(heroSpriteStand2, 1);

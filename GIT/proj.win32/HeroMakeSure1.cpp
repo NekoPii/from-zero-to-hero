@@ -77,7 +77,7 @@ bool HeroMakeSure1::init()
 
 void HeroMakeSure1::EnterMapScene(Ref *pSenderEnter)
 {
-	HeroID = "1";
+	HeroID = 1;
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,MapScene::createScene()));
 }
 
