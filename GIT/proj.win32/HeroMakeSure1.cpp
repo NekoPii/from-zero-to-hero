@@ -2,9 +2,12 @@
 #include "proj.win32/HeroChoose.h"
 #include "proj.win32/HeroMakeSure1.h"
 #include "GLOBAL.h"
+#include "cocos-ext.h"
+#include "ui/CocosGUI.h"
 
 
 USING_NS_CC;
+USING_NS_CC_EXT;
 
 
 Scene *HeroMakeSure1::createScene()
@@ -31,11 +34,25 @@ bool HeroMakeSure1::init()
 	addChild(MakeSure1BackGround, 0);
 
 
-	//人物图片1
-	auto Hero_1Picture = Sprite::create("Startbutton.jpg");
+	//人物展示1
+	/*auto Hero_1Picture = Sprite::create("Startbutton.jpg");
 	Hero_1Picture->setPosition(Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height / 2.0));
 	Hero_1Picture->setScale(2.0f);
-	addChild(Hero_1Picture,1);
+	addChild(Hero_1Picture,1);*/
+
+
+	initHero1Stand();
+	createAnimateStand1(7);
+	
+
+	//技能1
+	/*
+	Button *test1 = Button::create();
+	test1->loadTextures("Exitbutton.jpg", "Exitbutton.jpg", "");
+	test1->setPosition(Vec2(400, 500));
+	test1->addTouchEventListener(CC_CALLBACK_2(HeroMakeSure1::testcall, this));
+	addChild(test1,2);*/
+
 
 	//继续
 	auto labelContinue1 = Label::createWithTTF("Continue", "fonts/Marker Felt.ttf", 32);
@@ -61,10 +78,51 @@ bool HeroMakeSure1::init()
 void HeroMakeSure1::EnterMapScene(Ref *pSenderEnter)
 {
 	HeroID = "1";
-	Director::getInstance()->replaceScene(MapScene::createScene());
+	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,MapScene::createScene()));
 }
 
 void HeroMakeSure1::ReturnHeroChoose(Ref *pSenderReturn)
 {
-	Director::getInstance()->replaceScene(HeroChoose::createScene());
+	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroChoose::createScene()));
+}
+
+/*/Test
+void HeroMakeSure1::testcall(Ref *sender, Widget::TouchEventType controlevent)
+{
+	if (controlevent == Widget::TouchEventType::ENDED)
+	{
+		auto testSp1 = Sprite::create("Exitbutton.jpg");
+		addChild(testSp1, 5);
+		testSp1->setPosition(Vec2(600, 500));
+	}
+}*/
+
+
+void HeroMakeSure1::initHero1Stand()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	auto heroSpriteStand1 = Sprite::create("hero_1_stand5.png");
+	heroSpriteStand1->setScale(4.0f);
+	heroSpriteStand1->setPosition(Vec2(origin.x + visibleSize.width / 3.0, origin.y + visibleSize.height / 2.0));
+	addChild(heroSpriteStand1,1);
+	heroSpriteStand1->runAction(this->createAnimateStand1(7));
+
+}
+
+Animate* HeroMakeSure1::createAnimateStand1(int num)
+{
+	auto* frameCacheStand1 = SpriteFrameCache::getInstance();
+	frameCacheStand1->addSpriteFramesWithFile("hero_1_stand5.plist", "hero_1_stand5.png");
+	Vector <SpriteFrame*> frameArrayStand1;
+
+	for (int i = 1; i <= num; ++i)
+	{
+		auto* frameStand1 = frameCacheStand1->getSpriteFrameByName(String::createWithFormat("hero_1_stand5%d.png",i)->getCString());
+		frameArrayStand1.pushBack(frameStand1);
+	}
+	Animation* animationStand1 = Animation::createWithSpriteFrames(frameArrayStand1);
+	animationStand1->setLoops(-1);
+	animationStand1->setDelayPerUnit(0.1f);
+	return Animate::create(animationStand1);
 }

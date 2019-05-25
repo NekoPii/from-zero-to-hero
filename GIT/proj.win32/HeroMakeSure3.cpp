@@ -31,10 +31,14 @@ bool HeroMakeSure3::init()
 	addChild(MakeSure3BackGround, 0);
 
 	//ÈËÎïÍ¼Æ¬3
+	/*
 	auto Hero_3Picture = Sprite::create("Startbutton.jpg");
 	Hero_3Picture->setPosition(Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height / 2.0));
 	Hero_3Picture->setScale(2.0f);
-	addChild(Hero_3Picture,1);
+	addChild(Hero_3Picture,1);*/
+
+	initHero3Stand();
+	createAnimateStand3(7);
 
 	//¼ÌÐø
 	auto labelContinue3 = Label::createWithTTF("Continue", "fonts/Marker Felt.ttf", 32);
@@ -60,10 +64,39 @@ bool HeroMakeSure3::init()
 void HeroMakeSure3::EnterMapScene(Ref *pSenderEnter)
 {
 	HeroID = "3";
-	Director::getInstance()->replaceScene(MapScene::createScene());
+	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,MapScene::createScene()));
 }
 
 void HeroMakeSure3::ReturnHeroChoose(Ref *pSenderReturn)
 {
-	Director::getInstance()->replaceScene(HeroChoose::createScene());
+	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroChoose::createScene()));
+}
+
+void HeroMakeSure3::initHero3Stand()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	auto heroSpriteStand3 = Sprite::create("hero_3_stand5.png");
+	heroSpriteStand3->setScale(4.0f);
+	heroSpriteStand3->setPosition(Vec2(origin.x + visibleSize.width / 3.0, origin.y + visibleSize.height / 2.0));
+	addChild(heroSpriteStand3, 1);
+	heroSpriteStand3->runAction(this->createAnimateStand3(7));
+
+}
+
+Animate* HeroMakeSure3::createAnimateStand3(int num)
+{
+	auto* frameCacheStand3 = SpriteFrameCache::getInstance();
+	frameCacheStand3->addSpriteFramesWithFile("hero_3_stand5.plist", "hero_3_stand5.png");
+	Vector <SpriteFrame*> frameArrayStand3;
+
+	for (int i = 1; i <= num; ++i)
+	{
+		auto* frameStand3 = frameCacheStand3->getSpriteFrameByName(String::createWithFormat("hero_3_stand5%d.png", i)->getCString());
+		frameArrayStand3.pushBack(frameStand3);
+	}
+	Animation* animationStand3 = Animation::createWithSpriteFrames(frameArrayStand3);
+	animationStand3->setLoops(-1);
+	animationStand3->setDelayPerUnit(0.1f);
+	return Animate::create(animationStand3);
 }

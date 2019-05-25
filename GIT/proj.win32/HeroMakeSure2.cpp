@@ -32,10 +32,14 @@ bool HeroMakeSure2::init()
 
 
 	//ÈËÎïÍ¼Æ¬2
+	/*
 	auto Hero_2Picture = Sprite::create("Exitbutton.jpg");
 	Hero_2Picture->setPosition(Vec2(origin.x + visibleSize.width / 2.0, origin.y + visibleSize.height / 2.0));
 	Hero_2Picture->setScale(2.0f);
-	addChild(Hero_2Picture,1);
+	addChild(Hero_2Picture,1);*/
+
+	initHero2Stand();
+	createAnimateStand2(7);
 
 	//¼ÌÐø
 	auto labelContinue2 = Label::createWithTTF("Continue", "fonts/Marker Felt.ttf", 32);
@@ -61,10 +65,40 @@ bool HeroMakeSure2::init()
 void HeroMakeSure2::EnterMapScene(Ref *pSenderEnter)
 {
 	HeroID = "2";
-	Director::getInstance()->replaceScene(MapScene::createScene());
+	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,MapScene::createScene()));
 }
 
 void HeroMakeSure2::ReturnHeroChoose(Ref *pSenderReturn)
 {
-	Director::getInstance()->replaceScene(HeroChoose::createScene());
+	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroChoose::createScene()));
+}
+
+
+void HeroMakeSure2::initHero2Stand()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	auto heroSpriteStand2 = Sprite::create("hero_2_stand5.png");
+	heroSpriteStand2->setScale(4.0f);
+	heroSpriteStand2->setPosition(Vec2(origin.x + visibleSize.width / 3.0, origin.y + visibleSize.height / 2.0));
+	addChild(heroSpriteStand2, 1);
+	heroSpriteStand2->runAction(this->createAnimateStand2(7));
+
+}
+
+Animate* HeroMakeSure2::createAnimateStand2(int num)
+{
+	auto* frameCacheStand2 = SpriteFrameCache::getInstance();
+	frameCacheStand2->addSpriteFramesWithFile("hero_2_stand5.plist", "hero_2_stand5.png");
+	Vector <SpriteFrame*> frameArrayStand2;
+
+	for (int i = 1; i <= num; ++i)
+	{
+		auto* frameStand2 = frameCacheStand2->getSpriteFrameByName(String::createWithFormat("hero_2_stand5%d.png", i)->getCString());
+		frameArrayStand2.pushBack(frameStand2);
+	}
+	Animation* animationStand2 = Animation::createWithSpriteFrames(frameArrayStand2);
+	animationStand2->setLoops(-1);
+	animationStand2->setDelayPerUnit(0.1f);
+	return Animate::create(animationStand2);
 }

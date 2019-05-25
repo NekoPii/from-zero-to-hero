@@ -11,6 +11,8 @@ public:
 	virtual bool init();
 	void EnterMapScene(Ref *pSenderEnter);
 	void ReturnHeroChoose(Ref *pSenderReturn);
+	void initHero3Stand();
+	cocos2d::Animate * createAnimateStand3(int num);
 
 
 	// implement the "static create()" method manually

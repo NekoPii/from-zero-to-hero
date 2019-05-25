@@ -98,5 +98,5 @@ void MapScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 
 void MapScene::EnterHelloWorldScene(Ref *pSenderBack)
 {
-	Director::getInstance()->replaceScene((HelloWorld::createScene()));
+	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HelloWorld::createScene()));
 }
