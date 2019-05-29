@@ -3,6 +3,7 @@
 #include "GLOBAL.h"
 
 int HeroID = 0;
+int Gold = 10000;
 
 USING_NS_CC;
 

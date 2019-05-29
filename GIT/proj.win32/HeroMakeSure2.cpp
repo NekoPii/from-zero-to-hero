@@ -2,9 +2,12 @@
 #include "proj.win32/HeroChoose.h"
 #include "proj.win32/HeroMakeSure2.h"
 #include "GLOBAL.h"
+#include "cocos-ext.h"
+#include "ui/CocosGUI.h"
 
 
 USING_NS_CC;
+USING_NS_CC_EXT;
 
 
 Scene *HeroMakeSure2::createScene()
