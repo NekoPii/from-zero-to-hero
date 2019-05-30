@@ -40,6 +40,7 @@ public:
 	// implement the "static create()" method manually
 	CREATE_FUNC(MapScene);
 
+private:
 	Sprite *ShopBackGround;
 	Button * Weapon1;
 	Button * Weapon2;

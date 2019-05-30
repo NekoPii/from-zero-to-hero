@@ -59,7 +59,7 @@ bool MapScene::init()
 	CCString *goldCCstring=CCString::createWithFormat("%d",Gold);
 	std::string goldstring = goldCCstring->getCString();
 	Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
-	GoldNum->setPosition(Vec2(50,460));
+	GoldNum->setPosition(Vec2(50,450));
 	addChild(GoldNum, 9,55);
 
 
@@ -120,6 +120,10 @@ void MapScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 
 void MapScene::EnterHelloWorldScene(Ref *pSenderBack)
 {
+	//全局重新初始化
+	HeroID = 0;
+	Gold = 10000;
+	BuyWeaponNum = 0;
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HelloWorld::createScene()));
 }
 
@@ -135,9 +139,9 @@ void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 
 		Button *ShopBackButton = Button::create();
 		ShopBackButton->loadTextures("ShopBack.png", "ShopBack.png", "");
-		ShopBackButton->setPosition(Vec2(1660, 900));
+		ShopBackButton->setPosition(Vec2(1665, 910));
 		ShopBackButton->addTouchEventListener(CC_CALLBACK_2(MapScene::ShopBack, this));
-		ShopBackButton->setScale(0.7f);
+		ShopBackButton->setScale(0.72f);
 		addChild(ShopBackButton,14,66);
 
 		Sprite *ShopBackGround;
@@ -147,7 +151,31 @@ void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 		ShopBackGround->setOpacity(230);
 		addChild(ShopBackGround, 10, 60);
 
-	
+		//装备方案图标
+		Sprite *EquipPlan = Sprite::create("plan.png");
+		EquipPlan->setPosition(Vec2(280,200));
+		EquipPlan->setScale(1.0f);
+		addChild(EquipPlan, 10, 61);
+
+		//左上角小部件
+		Sprite *EquipLittle1 = Sprite::create("little.png");
+		EquipLittle1->setPosition(Vec2(200,900));
+		EquipLittle1->setScale(1.0f);
+		addChild(EquipLittle1, 10, 62);
+
+		//"商城"文字
+		auto *chnString = Dictionary::createWithContentsOfFile("CHN_String.xml");
+		const char *SHOP_string = ((String *)chnString->objectForKey("SHOP_Text"))->getCString();
+		Label *SHOP = Label::create(SHOP_string, "Arial", 33);
+		SHOP->setPosition(Vec2(300,900));
+		addChild(SHOP, 10, 63);
+
+		//武器一
+		const char *Weapon1_string = ((String *)chnString->objectForKey("Weapon1_Text"))->getCString();
+		Label *Weapon1String = Label::create(Weapon1_string, "Arial", 38);
+		Weapon1String->setPosition(Vec2(750,750));
+		addChild(Weapon1String, 12, 1010);
+
 		Button * Weapon1=Button::create();
 		Weapon1->loadTextures("weapon1.png", "weapon1.png", "");
 		Weapon1->setPosition(Vec2(550, 750));
@@ -155,6 +183,11 @@ void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon1->addTouchEventListener(CC_CALLBACK_2(MapScene::Shopbuy1, this));
 		addChild(Weapon1, 12, 101);
 
+		//武器二
+		const char *Weapon2_string = ((String *)chnString->objectForKey("Weapon2_Text"))->getCString();
+		Label *Weapon2String = Label::create(Weapon2_string, "Arial", 38);
+		Weapon2String->setPosition(Vec2(1200, 750));
+		addChild(Weapon2String, 12, 1020);
 
 		Button * Weapon2=Button::create();
 		Weapon2->loadTextures("weapon2.png", "weapon2.png", "");
@@ -163,6 +196,12 @@ void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon2->addTouchEventListener(CC_CALLBACK_2(MapScene::Shopbuy2, this));
 		addChild(Weapon2, 12, 102);
 
+		//武器三
+		const char *Weapon3_string = ((String *)chnString->objectForKey("Weapon3_Text"))->getCString();
+		Label *Weapon3String = Label::create(Weapon3_string, "Arial", 38);
+		Weapon3String->setPosition(Vec2(750, 550));
+		addChild(Weapon3String, 12, 1030);
+
 		Button * Weapon3=Button::create();
 		Weapon3->loadTextures("weapon3.png", "weapon3.png", "");
 		Weapon3->setPosition(Vec2(550, 550));
@@ -170,13 +209,25 @@ void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon3->addTouchEventListener(CC_CALLBACK_2(MapScene::Shopbuy3, this));
 		addChild(Weapon3, 12, 103);
 
+		//武器四
+		const char *Weapon4_string = ((String *)chnString->objectForKey("Weapon4_Text"))->getCString();
+		Label *Weapon4String = Label::create(Weapon4_string, "Arial", 38);
+		Weapon4String->setPosition(Vec2(1200, 550));
+		addChild(Weapon4String, 12, 1040);
+
 		Button * Weapon4=Button::create();
 		Weapon4->loadTextures("weapon4.png", "weapon4.png", "");
 		Weapon4->setPosition(Vec2(1000, 550));
 		Weapon4->setScale(0.8f);
 		Weapon4->addTouchEventListener(CC_CALLBACK_2(MapScene::Shopbuy4, this));
 		addChild(Weapon4, 12, 104);
-			
+		
+		//武器五
+		const char *Weapon5_string = ((String *)chnString->objectForKey("Weapon5_Text"))->getCString();
+		Label *Weapon5String = Label::create(Weapon5_string, "Arial", 38);
+		Weapon5String->setPosition(Vec2(750, 350));
+		addChild(Weapon5String, 12, 1050);
+
 		Button * Weapon5=Button::create();
 		Weapon5->loadTextures("weapon5.png", "weapon5.png", "");
 		Weapon5->setPosition(Vec2(550, 350));
@@ -184,12 +235,56 @@ void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon5->addTouchEventListener(CC_CALLBACK_2(MapScene::Shopbuy5, this));
 		addChild(Weapon5, 12, 105);
 
+		//武器六
+		const char *Weapon6_string = ((String *)chnString->objectForKey("Weapon6_Text"))->getCString();
+		Label *Weapon6String = Label::create(Weapon6_string, "Arial", 38);
+		Weapon6String->setPosition(Vec2(1200, 350));
+		addChild(Weapon6String, 12, 1060);
+
 		Button * Weapon6=Button::create();
 		Weapon6->loadTextures("weapon6.png", "weapon6.png", "");
 		Weapon6->setPosition(Vec2(1000, 350));
 		Weapon6->setScale(0.8f);
 		Weapon6->addTouchEventListener(CC_CALLBACK_2(MapScene::Shopbuy6, this));
 		addChild(Weapon6, 12, 106);
+
+
+		Sprite *Equipment1 = Sprite::create("kong.png");
+		Equipment1->setPosition(Vec2(500,200));
+		Equipment1->setScale(0.8f);
+		addChild(Equipment1, 12, 71);
+
+		Sprite *Equipment2 = Sprite::create("kong.png");
+		Equipment2->setPosition(Vec2(650,200));
+		Equipment2->setScale(0.8f);
+		addChild(Equipment2, 12, 72);
+
+		Sprite *Equipment3 = Sprite::create("kong.png");
+		Equipment3->setPosition(Vec2(800,200));
+		Equipment3->setScale(0.8f);
+		addChild(Equipment3, 12, 73);
+
+		Sprite *Equipment4 = Sprite::create("kong.png");
+		Equipment4->setPosition(Vec2(950,200));
+		Equipment4->setScale(0.8f);
+		addChild(Equipment4, 12, 74);
+
+		Sprite *Equipment5 = Sprite::create("kong.png");
+		Equipment5->setPosition(Vec2(1100,200));
+		Equipment5->setScale(0.8f);
+		addChild(Equipment5, 12, 75);
+
+		Sprite *Equipment6 = Sprite::create("kong.png");
+		Equipment6->setPosition(Vec2(1250,200));
+		Equipment6->setScale(0.8f);
+		addChild(Equipment6, 12, 76);
+
+		for (int p = 1; p <= BuyWeaponNum; ++p)
+		{
+			Sprite *Tmp = (Sprite *)this->getChildByTag(40+p);
+			Tmp->setVisible(true);
+		}
+
 	}
 }
 
@@ -220,11 +315,11 @@ void MapScene::Shopbuy1(Ref *sender, Widget::TouchEventType controlevent)
 
 		Sprite *Weapon1Detail;
 		Weapon1Detail = Sprite::create("weapon1detail.png");
-		Weapon1Detail->setPosition(Vec2(1650,591));
+		Weapon1Detail->setPosition(Vec2(1653,593));
 		Weapon1Detail->setScale(0.7f);
 		addChild(Weapon1Detail, 13,1011);
 
-		if (Gold >= 1740)
+		if (Gold >= 1740&&BuyWeaponNum<=5)
 		{
 			Button *BuyButton11=Button::create();
 			BuyButton11->loadTextures("buy1.png","buy1.png","");
@@ -234,7 +329,7 @@ void MapScene::Shopbuy1(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton11, 14, 1012);
 		}
 
-		if (Gold < 1740)
+		if (Gold < 1740 || BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton12;
 			BuyButton12 = Sprite::create("buy2.png");
@@ -275,7 +370,7 @@ void MapScene::Shopbuy2(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon2Detail->setScale(0.7f);
 		addChild(Weapon2Detail, 13,1021);
 
-		if (Gold >= 2140)
+		if (Gold >= 2140 && BuyWeaponNum <= 5)
 		{
 			Button *BuyButton21=Button::create();
 			BuyButton21->loadTextures("buy1.png", "buy1.png", "");
@@ -285,7 +380,7 @@ void MapScene::Shopbuy2(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton21, 14, 1022);
 		}
 
-		if (Gold < 2140)
+		if (Gold < 2140 || BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton22;
 			BuyButton22 = Sprite::create("buy2.png");
@@ -321,12 +416,12 @@ void MapScene::Shopbuy3(Ref *sender, Widget::TouchEventType controlevent)
 
 		Sprite *Weapon3Detail;
 		Weapon3Detail = Sprite::create("weapon3detail.png");
-		Weapon3Detail->setPosition(Vec2(1650,590));
+		Weapon3Detail->setPosition(Vec2(1653,590));
 		Weapon3Detail->setScale(0.7f);
 		addChild(Weapon3Detail, 13, 1031);
 
 
-		if (Gold >= 2300)
+		if (Gold >= 2300 && BuyWeaponNum <= 5)
 		{
 			Button *BuyButton31=Button::create();
 			BuyButton31->loadTextures("buy1.png", "buy1.png", "");
@@ -336,7 +431,7 @@ void MapScene::Shopbuy3(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton31, 14, 1032);
 		}
 
-		if (Gold < 2300)
+		if (Gold < 2300 || BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton32;
 			BuyButton32 = Sprite::create("buy2.png");
@@ -372,12 +467,12 @@ void MapScene::Shopbuy4(Ref *sender, Widget::TouchEventType controlevent)
 
 		Sprite *Weapon4Detail;
 		Weapon4Detail = Sprite::create("weapon4detail.png");
-		Weapon4Detail->setPosition(Vec2(1650,590));
+		Weapon4Detail->setPosition(Vec2(1653,590));
 		Weapon4Detail->setScale(0.7f);
 		addChild(Weapon4Detail, 13, 1041);
 
 
-		if (Gold >= 2990)
+		if (Gold >= 2990 && BuyWeaponNum <= 5)
 		{
 			Button *BuyButton41=Button::create();
 			BuyButton41->loadTextures("buy1.png", "buy1.png", "");
@@ -387,7 +482,7 @@ void MapScene::Shopbuy4(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton41, 14, 1042);
 		}
 
-		if (Gold < 2990)
+		if (Gold < 2990 || BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton42;
 			BuyButton42 = Sprite::create("buy2.png");
@@ -423,12 +518,12 @@ void MapScene::Shopbuy5(Ref *sender, Widget::TouchEventType controlevent)
 
 		Sprite *Weapon5Detail;
 		Weapon5Detail = Sprite::create("weapon5detail.png");
-		Weapon5Detail->setPosition(Vec2(1650,590));
+		Weapon5Detail->setPosition(Vec2(1653,590));
 		Weapon5Detail->setScale(0.7f);
 		addChild(Weapon5Detail, 13, 1051);
 
 
-		if (Gold >= 900)
+		if (Gold >= 900 && BuyWeaponNum <= 5)
 		{
 			Button *BuyButton51=Button::create();
 			BuyButton51->loadTextures("buy1.png", "buy1.png", "");
@@ -438,7 +533,7 @@ void MapScene::Shopbuy5(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton51, 14, 1052);
 		}
 
-		if (Gold < 900)
+		if (Gold < 900 || BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton52;
 			BuyButton52 = Sprite::create("buy2.png");
@@ -479,7 +574,7 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 		addChild(Weapon6Detail, 13, 1061);
 
 
-		if (Gold >= 710)
+		if (Gold >= 710 && BuyWeaponNum <= 5)
 		{
 			Button *BuyButton61=Button::create();
 			BuyButton61->loadTextures("buy1.png", "buy1.png", "");
@@ -489,7 +584,7 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton61, 14, 1062);
 		}
 
-		if (Gold < 710)
+		if (Gold < 710||BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton62;
 			BuyButton62 = Sprite::create("buy2.png");
@@ -504,14 +599,19 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 //武器一确认购买
 void MapScene::Buyit1(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum<=5)
 	{
+		BuyWeaponNum++;
+		Sprite *MyEquip1 = Sprite::create("weapon1.png");
+		MyEquip1->setPosition(Vec2(350+BuyWeaponNum*150,200));
+		MyEquip1->setScale(0.7f);
+		addChild(MyEquip1, 14, 40 + BuyWeaponNum);
 		Gold -= 1740;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
-		GoldNum->setPosition(Vec2(50, 460));
+		GoldNum->setPosition(Vec2(50, 450));
 		addChild(GoldNum, 9, 55);
 		removeChildByTag(1011);
 		removeChildByTag(1012);
@@ -537,14 +637,19 @@ void MapScene::Buyit1(Ref *sender, Widget::TouchEventType controlevent)
 //武器二确认购买
 void MapScene::Buyit2(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
 	{
+		BuyWeaponNum++;
+		Sprite *MyEquip2 = Sprite::create("weapon2.png");
+		MyEquip2->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
+		MyEquip2->setScale(0.7f);
+		addChild(MyEquip2, 14, 40+BuyWeaponNum);
 		Gold -= 2140;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
-		GoldNum->setPosition(Vec2(50, 460));
+		GoldNum->setPosition(Vec2(50, 450));
 		addChild(GoldNum, 9, 55);
 		removeChildByTag(1011);
 		removeChildByTag(1012);
@@ -570,14 +675,19 @@ void MapScene::Buyit2(Ref *sender, Widget::TouchEventType controlevent)
 //武器三确认购买
 void MapScene::Buyit3(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
 	{
+		BuyWeaponNum++;
+		Sprite *MyEquip3 = Sprite::create("weapon3.png");
+		MyEquip3->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
+		MyEquip3->setScale(0.7f);
+		addChild(MyEquip3, 14, 40 + BuyWeaponNum);
 		Gold -= 2300;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
-		GoldNum->setPosition(Vec2(50, 460));
+		GoldNum->setPosition(Vec2(50, 450));
 		addChild(GoldNum, 9, 55);
 		removeChildByTag(1011);
 		removeChildByTag(1012);
@@ -603,14 +713,19 @@ void MapScene::Buyit3(Ref *sender, Widget::TouchEventType controlevent)
 //武器四确认购买
 void MapScene::Buyit4(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
 	{
+		BuyWeaponNum++;
+		Sprite *MyEquip4 = Sprite::create("weapon4.png");
+		MyEquip4->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
+		MyEquip4->setScale(0.7f);
+		addChild(MyEquip4, 14, 40 + BuyWeaponNum);
 		Gold -= 2990;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
-		GoldNum->setPosition(Vec2(50, 460));
+		GoldNum->setPosition(Vec2(50, 450));
 		addChild(GoldNum, 9, 55);
 		removeChildByTag(1011);
 		removeChildByTag(1012);
@@ -636,14 +751,21 @@ void MapScene::Buyit4(Ref *sender, Widget::TouchEventType controlevent)
 //武器五确认购买
 void MapScene::Buyit5(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
 	{
+		BuyWeaponNum++;
+		CCString *BuyCCstring5 = CCString::createWithFormat("%d", BuyWeaponNum);
+		std::string buystring5 = BuyCCstring5->getCString();
+		Sprite *MyEquip5 = Sprite::create("weapon5.png");
+		MyEquip5->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
+		MyEquip5->setScale(0.7f);
+		addChild(MyEquip5, 14, 40 + BuyWeaponNum);
 		Gold -= 900;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
-		GoldNum->setPosition(Vec2(50, 460));
+		GoldNum->setPosition(Vec2(50, 450));
 		addChild(GoldNum, 9, 55);
 		removeChildByTag(1011);
 		removeChildByTag(1012);
@@ -669,14 +791,21 @@ void MapScene::Buyit5(Ref *sender, Widget::TouchEventType controlevent)
 //武器六确认购买
 void MapScene::Buyit6(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
 	{
+		BuyWeaponNum++;
+		CCString *BuyCCstring6 = CCString::createWithFormat("%d", BuyWeaponNum);
+		std::string buystring6 = BuyCCstring6->getCString();
+		Sprite *MyEquip6 = Sprite::create("weapon6.png");
+		MyEquip6->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
+		MyEquip6->setScale(0.7f);
+		addChild(MyEquip6, 14, 40 + BuyWeaponNum);
 		Gold -= 710;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
-		GoldNum->setPosition(Vec2(50, 460));
+		GoldNum->setPosition(Vec2(50, 450));
 		addChild(GoldNum, 9, 55);
 		removeChildByTag(1011);
 		removeChildByTag(1012);
@@ -704,29 +833,49 @@ void MapScene::ShopBack(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		for (int p = 1; p <= BuyWeaponNum; ++p)
+		{
+			Sprite *Tmp = (Sprite *)this->getChildByTag(40 + p);
+			Tmp->setVisible(false);
+		}
 		removeChildByTag(60);
+		removeChildByTag(61);
+		removeChildByTag(62);
+		removeChildByTag(63);
 		removeChildByTag(66);
+		removeChildByTag(71);
+		removeChildByTag(72);
+		removeChildByTag(73);
+		removeChildByTag(74);
+		removeChildByTag(75);
+		removeChildByTag(76);
 		removeChildByTag(101);
 		removeChildByTag(102);
 		removeChildByTag(103);
 		removeChildByTag(104);
 		removeChildByTag(105);
 		removeChildByTag(106);
+		removeChildByTag(1010);
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
+		removeChildByTag(1020);
 		removeChildByTag(1021);
 		removeChildByTag(1022);
 		removeChildByTag(1023);
+		removeChildByTag(1030);
 		removeChildByTag(1031);
 		removeChildByTag(1032);
 		removeChildByTag(1033);
+		removeChildByTag(1040);
 		removeChildByTag(1041);
 		removeChildByTag(1042);
 		removeChildByTag(1043);
+		removeChildByTag(1050);
 		removeChildByTag(1051);
 		removeChildByTag(1052);
 		removeChildByTag(1053);
+		removeChildByTag(1060);
 		removeChildByTag(1061);
 		removeChildByTag(1062);
 		removeChildByTag(1063);

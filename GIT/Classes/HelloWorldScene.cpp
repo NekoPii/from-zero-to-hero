@@ -4,6 +4,7 @@
 
 int HeroID = 0;
 int Gold = 10000;
+int BuyWeaponNum = 0;
 
 USING_NS_CC;
 
