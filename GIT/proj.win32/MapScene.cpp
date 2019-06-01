@@ -33,13 +33,26 @@ bool MapScene::init()
 
 	//地图
 	auto MAP = Sprite::create("map.jpg");
-	MAP->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
-	MAP->setScale(3.0f);
-	auto * layer1 = Layer::create();
+	MAP->setPosition(Vec2(0, 0));
+	MAP->setScale(1.0f);
+	map = TMXTiledMap::create("mapCan/map5.tmx");
+	MAP->setAnchorPoint(Point(0, 0));
+	//map->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
+	//map->setScale(3.0f);
+	//map->setPosition(Vec2(0, 0));
+	Vec2 pos = map->getPosition();
+	CCLOG("%f   %f", pos.x, pos.y);
+	pos = MAP->getPosition();
+	CCLOG("%f   %f", pos.x, pos.y);
+	auto* layer1 = Layer::create();
 	layer1->setAnchorPoint(Vec2(0, 0));
 	layer1->setPosition((Vec2(0, 0)));
 	layer1->addChild(MAP);
+	layer1->addChild(map);
 	this->addChild(layer1, 0, 1);
+	_colliable = map->getLayer("colidable");
+	canMove = 0;
+	//_colliable->setVisible(false);
 
 	//游戏返回按钮
 
@@ -75,11 +88,22 @@ bool MapScene::init()
 	myKeyListener->onKeyPressed = CC_CALLBACK_2(HelloWorld::onKeyPressed, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(myKeyListener, this);
+	this->schedule(schedule_selector(MapScene::heroIn), 0.01f);
 	return true;
 }
-bool MapScene::onTouchBegan(Touch *touch, Event *unused_event)
+bool MapScene::onTouchBegan(Touch* touch, Event* unused_event)
 {
 	hero->getDirection(hero->currentPosition, touch->getLocation());
+	Vec2 tiledPositon = tiledpos(touch->getLocation());
+	int tileGid = _colliable->getTileGIDAt(tiledPositon);
+	if (canMove == 1 && touch->getLocation() != touchLocation)
+	{
+		canMove = 2;
+	}
+	touchLocation = touch->getLocation();
+	/*if (tileGid > 0)
+		return false;
+	else*/
 	hero->heroMoveTo(touch->getLocation());
 	return false;
 }
@@ -116,6 +140,32 @@ void MapScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
 		layer1->setPosition(Vec2(layer_position.x, layer_position.y + 100));
 		CCLOG("按下下键");
 	}
+}
+
+void MapScene::heroIn(float dt)
+{
+	Vec2 hero_position = hero->herosPosition();
+	Vec2 tiledPositon = tiledpos(hero_position);
+	int tileGid = _colliable->getTileGIDAt(tiledPositon);
+	CCLOG("%d     ,  ,   %d", tiledPositon.x, tiledPositon.y);
+	if (tileGid > 0 && canMove != 2)
+	{
+		CCLOG("%d     ,  ,   %d", tiledPositon.x, tiledPositon.y);
+		hero->heroMoveTo(hero_position);
+		canMove = 1;
+		return;
+	}
+	if (canMove == 2 && tileGid <= 0)
+	{
+		canMove = 0;
+	}
+	return;
+}
+Vec2 MapScene::tiledpos(Vec2 pos)
+{
+	int x = pos.x / map->getTileSize().width;
+	int y = ((map->getTileSize().height * map->getMapSize().height) - pos.y) / map->getTileSize().height;
+	return Vec2(x, y);
 }
 
 void MapScene::EnterHelloWorldScene(Ref *pSenderBack)

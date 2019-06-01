@@ -4,6 +4,7 @@ USING_NS_CC;
 class heroPrint :public cocos2d::CCNode 
 {
 public:
+
 	int heroNumber;
 	int direction;
 	cocos2d::Point currentPosition;

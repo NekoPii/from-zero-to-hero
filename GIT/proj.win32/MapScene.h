@@ -15,10 +15,19 @@ class MapScene : public cocos2d::Layer
 public:
 	static cocos2d::Scene* createScene();
 
+
+	TMXTiledMap* map;
+	TMXLayer* _colliable;
+	Vec2 touchLocation;
+	int canMove;
 	virtual bool init();
 	heroPrint* hero;
 	//void update(float dt);
 	//void updatePosition(float dt);
+
+	void heroIn(float dt);
+	Vec2 tiledpos(Vec2 pos);
+
 	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
 	virtual void onKeyPressed(EventKeyboard::KeyCode keycode, Event* event);
 	void EnterHelloWorldScene(Ref* pSenderBack);
