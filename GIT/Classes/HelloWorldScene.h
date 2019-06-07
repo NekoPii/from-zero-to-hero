@@ -13,13 +13,11 @@ public:
     virtual bool init();
 	virtual void update(float dt);
 	void EnterHeroChooseScene(Ref *pSenderEnter);
-
     void CloseGame(cocos2d::Ref* pSenderClose);
-
     
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
-
+	
 private:
 	ProgressTimer *Loading;
 	LabelTTF *PEC;

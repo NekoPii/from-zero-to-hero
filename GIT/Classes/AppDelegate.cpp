@@ -1,5 +1,4 @@
 #include "AppDelegate.h"
-#include "proj.win32/InitLoading.h"
 #include "HelloWorldScene.h"
 
 // #define USE_AUDIO_ENGINE 1

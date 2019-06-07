@@ -27,6 +27,10 @@ bool HeroMakeSure1::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	auto *chnString = Dictionary::createWithContentsOfFile("CHN_String.xml");
+	const char *ContinueGameStr = ((String *)chnString->objectForKey("Continue_Text"))->getCString();
+	const char *BackGameStr = ((String *)chnString->objectForKey("Back_Text"))->getCString();
+
 	//切换界面背景
 	auto MakeSure1BackGround = Sprite::create("ChooseBackGround.jpg");
 	MakeSure1BackGround->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
@@ -55,7 +59,7 @@ bool HeroMakeSure1::init()
 
 
 	//继续
-	auto labelContinue1 = Label::createWithTTF("Continue", "fonts/Marker Felt.ttf", 32);
+	auto labelContinue1 = Label::create(ContinueGameStr, "Arial", 32);
 	auto pContinueButtonItem1 = MenuItemImage::create("Startbutton.jpg", "Startbutton.jpg", CC_CALLBACK_1(HeroMakeSure1::EnterMapScene, this));
 	auto ContinueButton1 = Menu::create(pContinueButtonItem1, NULL);
 	ContinueButton1->setPosition(Vec2(origin.x + 2.0 *visibleSize.width / 3.0, origin.y + visibleSize.height / 5.0 - labelContinue1->getContentSize().height));
@@ -64,7 +68,7 @@ bool HeroMakeSure1::init()
 	addChild(ContinueButton1, 1);
 
 	//重选
-	auto labelReturn1 = Label::createWithTTF("ReSelect", "fonts/Marker Felt.ttf", 32);
+	auto labelReturn1 = Label::create(BackGameStr, "Arial", 32);
 	auto pReturnButtonItem1 = MenuItemImage::create("Exitbutton.jpg", "Exitbutton.jpg", CC_CALLBACK_1(HeroMakeSure1::ReturnHeroChoose, this));
 	auto ReturnButton1 = Menu::create(pReturnButtonItem1, NULL);
 	ReturnButton1->setPosition(Vec2(origin.x + visibleSize.width / 3.0, origin.y + visibleSize.height / 5.0 - labelReturn1->getContentSize().height));
@@ -77,7 +81,8 @@ bool HeroMakeSure1::init()
 
 void HeroMakeSure1::EnterMapScene(Ref *pSenderEnter)
 {
-	HeroID = 1;
+	MyHeroID = 1;
+	YourHeroID = 1;
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,MapScene::createScene()));
 }
 

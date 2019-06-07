@@ -2,11 +2,17 @@
 #include "proj.win32/HeroChoose.h"
 #include "GLOBAL.h"
 
-int HeroID = 0;
-int Gold = 10000;
-int BuyWeaponNum = 0;
+int MyHeroID = 0;
+int YourHeroID = 0;
+int MyGold = 10000;
+int YourGold = 10000;
+int MyBuyWeaponNum = 0;
+int YouBuyWeaponNum = 0;
+
+
 
 USING_NS_CC;
+
 
 Scene* HelloWorld::createScene()
 {
@@ -57,28 +63,28 @@ bool HelloWorld::init()
 	spriteBackGround->setScale(1.0f);
     addChild(spriteBackGround, 0);
 
-	
-
     return true;
 }
+
 
 void HelloWorld::update(float dt)
 {
 	float Cur = Loading->getPercentage();
-	Cur += 0.1f;
+	Cur += 5.0f;
 	Loading->setPercentage(Cur);
-
 	if (Cur <= 100)
 	{
-		auto tmpstr = String::createWithFormat("%.2f%%", Cur);
+		auto tmpstr = String::createWithFormat("%.0f%%", Cur);
 		PEC->setString(tmpstr->getCString());
 	}
 	else
 	{
 		unscheduleUpdate();
+		Sleep(1500);
 		Director::getInstance()->replaceScene(TransitionFade::create(1.0f, HeroChoose::createScene()));
 	}
 }
+
 
 //Ìø×ªµ½HeroChoose
 void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
@@ -87,26 +93,33 @@ void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 	removeChildByTag(21);
 	removeChildByTag(22);
 	removeChildByTag(23);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1.png",NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon2.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon3.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon4.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon5.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon6.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detail.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detai2.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detai3.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detai4.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detai5.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detai6.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("ChooseBackGround.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("Exitbutton.jpg", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("Startbutton.jpg", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("Shopbackground.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("plan.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("little.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("shop.png", NULL);
-	CCTextureCache::sharedTextureCache()->addImageAsync("map.png", NULL);
+
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon1.png",NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon2.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon3.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon4.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon5.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon6.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detail.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detai2.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detai3.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detai4.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detai5.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detai6.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("ChooseBackGround.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("Exitbutton.jpg", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("Startbutton.jpg", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("Shopbackground.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("plan.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("little.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("map.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("shop.png", NULL);//20
+	Director::getInstance()->getTextureCache()->addImageAsync("buy1.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("buy2.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("kong.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("Hero1_Avatar.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("Hero2_Avatar.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("Hero3_Avatar.png", NULL);
 
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();
@@ -121,7 +134,7 @@ void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 	Loading->setPercentage(0);
 	addChild(Loading, 1);
 	PEC = CCLabelTTF::create("0", "fonts / Marker Felt", 32);
-	PEC->setColor(ccc3(0,0,0));
+	PEC->setColor(ccc3(0, 0, 0));
 	PEC->setPosition(Vec2(origin.x + visibleSize.width*0.5, origin.y + visibleSize.height*0.06));
 	addChild(PEC, 1);
 	scheduleUpdate();

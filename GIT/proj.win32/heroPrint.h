@@ -17,8 +17,5 @@ public:
 	cocos2d::Animate* createAnimate(int direction, const char *action, int num);
 	void heroResume();
 	CREATE_FUNC(heroPrint);
-
-	
-	
 };
 

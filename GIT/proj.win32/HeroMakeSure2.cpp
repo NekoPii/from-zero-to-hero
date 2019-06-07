@@ -27,6 +27,10 @@ bool HeroMakeSure2::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	auto *chnString = Dictionary::createWithContentsOfFile("CHN_String.xml");
+	const char *ContinueGameStr = ((String *)chnString->objectForKey("Continue_Text"))->getCString();
+	const char *BackGameStr = ((String *)chnString->objectForKey("Back_Text"))->getCString();
+
 	//切换界面背景
 	auto MakeSure2BackGround = Sprite::create("ChooseBackGround.jpg");
 	MakeSure2BackGround->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
@@ -45,7 +49,7 @@ bool HeroMakeSure2::init()
 	createAnimateStand2(7);
 
 	//继续
-	auto labelContinue2 = Label::createWithTTF("Continue", "fonts/Marker Felt.ttf", 32);
+	auto labelContinue2 = Label::create(ContinueGameStr, "Arial", 32);
 	auto pContinueButtonItem2 = MenuItemImage::create("Startbutton.jpg", "Startbutton.jpg", CC_CALLBACK_1(HeroMakeSure2::EnterMapScene, this));
 	auto ContinueButton2 = Menu::create(pContinueButtonItem2, NULL);
 	ContinueButton2->setPosition(Vec2(origin.x + 2.0 *visibleSize.width / 3.0, origin.y + visibleSize.height / 5.0 - labelContinue2->getContentSize().height));
@@ -54,7 +58,7 @@ bool HeroMakeSure2::init()
 	addChild(ContinueButton2, 1);
 
 	//重选
-	auto labelReturn2 = Label::createWithTTF("ReSelect", "fonts/Marker Felt.ttf", 32);
+	auto labelReturn2 = Label::create(BackGameStr, "Arial", 32);
 	auto pReturnButtonItem2 = MenuItemImage::create("Exitbutton.jpg", "Exitbutton.jpg", CC_CALLBACK_1(HeroMakeSure2::ReturnHeroChoose, this));
 	auto ReturnButton2 = Menu::create(pReturnButtonItem2, NULL);
 	ReturnButton2->setPosition(Vec2(origin.x + visibleSize.width / 3.0, origin.y + visibleSize.height / 5.0 - labelReturn2->getContentSize().height));
@@ -67,7 +71,8 @@ bool HeroMakeSure2::init()
 
 void HeroMakeSure2::EnterMapScene(Ref *pSenderEnter)
 {
-	HeroID = 2;
+	MyHeroID = 2;
+	YourHeroID = 2;
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,MapScene::createScene()));
 }
 

@@ -31,8 +31,11 @@ public:
 	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
 	virtual void onKeyPressed(EventKeyboard::KeyCode keycode, Event* event);
 	void EnterHelloWorldScene(Ref* pSenderBack);
-	void Shopcall(Ref *sender, Widget::TouchEventType controlevent);
+	void ShopCall(Ref *sender, Widget::TouchEventType controlevent);
 	void ShopBack(Ref *sender, Widget::TouchEventType controlevent);
+	void ZhanjiCall(Ref *sender, Widget::TouchEventType controlevent);
+	void ZhanjiBack(Ref *sender, Widget::TouchEventType controlevent);
+
 	void Shopbuy1(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy2(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy3(Ref *sender, Widget::TouchEventType controlevent);
