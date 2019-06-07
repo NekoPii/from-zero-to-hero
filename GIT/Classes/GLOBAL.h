@@ -1,4 +1,5 @@
 #pragma once
+
 extern int MyHeroID;
 extern int YourHeroID;
 extern int MyGold;
@@ -9,3 +10,4 @@ extern int MeKill;
 extern int MeDead;
 extern int YouKill;
 extern int YouDead;
+

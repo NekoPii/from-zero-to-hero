@@ -27,6 +27,7 @@ bool HeroMakeSure3::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+
 	auto *chnString = Dictionary::createWithContentsOfFile("CHN_String.xml");
 	const char *ContinueGameStr = ((String *)chnString->objectForKey("Continue_Text"))->getCString();
 	const char *BackGameStr = ((String *)chnString->objectForKey("Back_Text"))->getCString();
@@ -70,6 +71,7 @@ bool HeroMakeSure3::init()
 
 void HeroMakeSure3::EnterMapScene(Ref *pSenderEnter)
 {
+
 	MyHeroID = 3;
 	YourHeroID = 3;
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,MapScene::createScene()));

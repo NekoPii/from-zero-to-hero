@@ -2,6 +2,7 @@
 #include "proj.win32/HeroChoose.h"
 #include "GLOBAL.h"
 
+
 int MyHeroID = 0;
 int YourHeroID = 0;
 int MyGold = 10000;
@@ -10,6 +11,10 @@ int MyBuyWeaponNum = 0;
 int YouBuyWeaponNum = 0;
 
 
+
+int HeroID = 0;
+int Gold = 10000;
+int BuyWeaponNum = 0;
 
 USING_NS_CC;
 
@@ -63,8 +68,16 @@ bool HelloWorld::init()
 	spriteBackGround->setScale(1.0f);
     addChild(spriteBackGround, 0);
 
+	
+
     return true;
 }
+
+void HelloWorld::update(float dt)
+{
+	float Cur = Loading->getPercentage();
+	Cur += 0.1f;
+	Loading->setPercentage(Cur);
 
 
 void HelloWorld::update(float dt)
@@ -86,13 +99,16 @@ void HelloWorld::update(float dt)
 }
 
 
+
 //Ìø×ªµ½HeroChoose
 void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 {
+
 	removeChildByTag(20);
 	removeChildByTag(21);
 	removeChildByTag(22);
 	removeChildByTag(23);
+
 
 	Director::getInstance()->getTextureCache()->addImageAsync("weapon1.png",NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("weapon2.png", NULL);
@@ -120,7 +136,6 @@ void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 	Director::getInstance()->getTextureCache()->addImageAsync("Hero1_Avatar.png", NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("Hero2_Avatar.png", NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("Hero3_Avatar.png", NULL);
-
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
