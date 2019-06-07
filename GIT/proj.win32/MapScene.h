@@ -15,15 +15,27 @@ class MapScene : public cocos2d::Layer
 public:
 	static cocos2d::Scene* createScene();
 
+
 	TMXTiledMap* map;
 	TMXLayer* _colliable;
 	Vec2 touchLocation;
+	int time = 0;
 	int canMove;
+	CCRect getRect(Node* pNode);
 	virtual bool init();
 	heroPrint* hero;
 	//void update(float dt);
 	//void updatePosition(float dt);
 	void heroIn(float dt);
+	void Tower1(float dt);
+	void soldersMake(float dt);
+	void soldersContrl(float dt);
+	void Tower2(float dt);
+	float getDistance(Vec2 me, Vec2 you);
+	Sprite* chosenEnemy;
+	Sprite* chosenFriend;
+	Vector<Sprite*> Friend;
+	Vector<Sprite*> Enemy;
 	Vec2 tiledpos(Vec2 pos);
 	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
 	virtual void onKeyPressed(EventKeyboard::KeyCode keycode, Event* event);
