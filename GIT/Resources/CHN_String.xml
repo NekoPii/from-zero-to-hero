@@ -11,25 +11,4 @@
           <string>确定</string>
           <key>Choose_Text</key>
           <string>请选择你的英雄</string>
-          <key>SHOP_Text</key>
-          <string>商城</string>
-          <key>Kill_Text</key>
-          <string>击杀</string>
-          <key>Dead_Text</key>
-          <string>死亡</string>
-          <key>Zhanji_Text</key>
-          <string>战绩</string>
-          <key>Weapon1_Text</key>
-          <string>泣血之刃</string>
-          <key>Weapon2_Text</key>
-          <string>无尽战刃</string>
-          <key>Weapon3_Text</key>
-          <string>博学者之怒</string>
-          <key>Weapon4_Text</key>
-          <string>贤者之书</string>
-          <key>Weapon5_Text</key>
-          <string>雪山圆盾</string>
-          <key>Weapon6_Text</key>
-          <string>急速战靴</string>
 </dict>
-

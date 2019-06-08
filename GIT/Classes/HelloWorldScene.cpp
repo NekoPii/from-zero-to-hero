@@ -1,20 +1,12 @@
 #include "HelloWorldScene.h"
 #include "proj.win32/HeroChoose.h"
 #include "GLOBAL.h"
-#include "SimpleAudioEngine.h"
 
-
-int MyHeroID = 0;
-int YourHeroID = 0;
-int MyGold = 10000;
-int YourGold = 10000;
-int MyBuyWeaponNum = 0;
-int YouBuyWeaponNum = 0;
-
+int HeroID = 0;
+int Gold = 10000;
+int BuyWeaponNum = 0;
 
 USING_NS_CC;
-using namespace CocosDenshion;
-
 
 Scene* HelloWorld::createScene()
 {
@@ -38,9 +30,6 @@ bool HelloWorld::init()
 	auto *chnString = Dictionary::createWithContentsOfFile("CHN_String.xml");
 	const char *StartGameStr = ((String *)chnString->objectForKey("StartGame_Text"))->getCString();
 	const char *EndGameStr = ((String *)chnString->objectForKey("EndGame_Text"))->getCString();
-
-	SimpleAudioEngine::getInstance()->preloadEffect("Touch.wav");
-	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("BGM.wav");
 
 	//StartButton
     auto labelStart = Label::create(StartGameStr, "Arial", 33);
@@ -73,64 +62,52 @@ bool HelloWorld::init()
     return true;
 }
 
-
 void HelloWorld::update(float dt)
 {
 	float Cur = Loading->getPercentage();
-	Cur += 2.0f;
+	Cur += 20.0f;
 	Loading->setPercentage(Cur);
+
 	if (Cur <= 100)
 	{
-		auto tmpstr = String::createWithFormat("%.0f%%", Cur);
+		auto tmpstr = String::createWithFormat("%.2f%%", Cur);
 		PEC->setString(tmpstr->getCString());
 	}
 	else
 	{
 		unscheduleUpdate();
-		Sleep(1500);
 		Director::getInstance()->replaceScene(TransitionFade::create(1.0f, HeroChoose::createScene()));
 	}
 }
 
-
-
 //跳转到HeroChoose
 void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 {
-	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
-	SimpleAudioEngine::getInstance()->playBackgroundMusic("BGM.wav",true);
 	removeChildByTag(20);
 	removeChildByTag(21);
 	removeChildByTag(22);
 	removeChildByTag(23);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1.png",NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon2.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon3.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon4.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon5.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon6.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detail.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detai2.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detai3.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detai4.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detai5.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("weapon1detai6.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("ChooseBackGround.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("Exitbutton.jpg", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("Startbutton.jpg", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("Shopbackground.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("plan.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("little.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("shop.png", NULL);
+	CCTextureCache::sharedTextureCache()->addImageAsync("map.png", NULL);
 
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon1.png",NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon2.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon3.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon4.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon5.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon6.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detail.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon2detail.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon3detail.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon4detail.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon5detail.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon6detail.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("ChooseBackGround.jpg", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("Exitbutton.jpg", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("Startbutton.jpg", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("Shopbackground.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("plan.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("little.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("map.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("shop.png", NULL);//20
-	Director::getInstance()->getTextureCache()->addImageAsync("buy1.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("buy2.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("kong.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("Hero1_Avatar.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("Hero2_Avatar.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("Hero3_Avatar.png", NULL);
-	SimpleAudioEngine::getInstance()->preloadEffect("GOLD.wav");
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -144,15 +121,14 @@ void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 	Loading->setPercentage(0);
 	addChild(Loading, 1);
 	PEC = CCLabelTTF::create("0", "fonts / Marker Felt", 32);
-	PEC->setColor(ccc3(0, 0, 0));
+	PEC->setColor(ccc3(0,0,0));
 	PEC->setPosition(Vec2(origin.x + visibleSize.width*0.5, origin.y + visibleSize.height*0.06));
 	addChild(PEC, 1);
 	scheduleUpdate();
-}
+} 
 
 //关闭游戏
 void HelloWorld::CloseGame(cocos2d::Ref* pSenderClose)
 {
-	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->end();
 }

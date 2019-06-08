@@ -8,17 +8,13 @@
 #include "ui/CocosGUI.h"
 #include "deprecated/CCString.h"
 #include "object.h"
-#include "SimpleAudioEngine.h"
-
+#include <vector>
+using namespace std;
 
 USING_NS_CC;
 USING_NS_CC_EXT;
-using namespace CocosDenshion;
 
-int MeKill = 0;
-int MeDead = 0;
-int YouKill = 0;
-int YouDead = 0;
+int current = 0;
 
 
 Scene *MapScene::createScene()
@@ -35,11 +31,16 @@ bool MapScene::init()
 	{
 		return false;
 	}
+	for (int i = 0; i < 50; i++)
+	{
+		int n = 0;
+		use.push_back(n);
+	}
+	use[40] = 1;
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	//地图
-
 	auto MAP = Sprite::create("map.jpg");
 	MAP->setPosition(Vec2(0, 0));
 	MAP->setScale(1.0f);
@@ -61,19 +62,18 @@ bool MapScene::init()
 	_colliable = map->getLayer("colidable");
 	canMove = 0;
 	//_colliable->setVisible(false);
-
 	auto protect1 = object::createObject();
-	addChild(protect1, 0, 3);
+	addChild(protect1, 0, 2045);
 	protect1->start(1, Vec2(1730, 1020));
 	Enemy.pushBack(protect1->enemy);
 	chosenEnemy = NULL;
 	auto protect2 = object::createObject();
-	addChild(protect2, 0, 4);
+	addChild(protect2, 0, 2044);
 	protect2->start(2, Vec2(500, 420));
 	Friend.pushBack(protect2->enemy);
 	chosenFriend = NULL;
-	
 	//游戏返回按钮
+
 	auto pBackButtonItem = MenuItemImage::create("Backbutton.png", "Backbutton.png", CC_CALLBACK_1(MapScene::EnterHelloWorldScene, this));
 	auto BackButton = Menu::create(pBackButtonItem, NULL);
 	BackButton->setPosition(Vec2(80, visibleSize.height - 30));
@@ -83,57 +83,28 @@ bool MapScene::init()
 	Button *ShopButton = Button::create();
 	ShopButton->loadTextures("shop.png", "shop.png", "");
 	ShopButton->setPosition(Vec2(50, 500));
-	ShopButton->addTouchEventListener(CC_CALLBACK_2(MapScene::ShopCall, this));
+	ShopButton->addTouchEventListener(CC_CALLBACK_2(MapScene::Shopcall, this));
 	addChild(ShopButton, 9,50); 
 
-	//战绩图标
-	Button *ZhanjiButton = Button::create();
-	ZhanjiButton->loadTextures("Zhanji.png", "Zhanji.png", "");
-	ZhanjiButton->setPosition(Vec2(1750,1030));
-	ZhanjiButton->setScale(1.0f);
-	ZhanjiButton->addTouchEventListener(CC_CALLBACK_2(MapScene::ZhanjiCall, this));
-	addChild(ZhanjiButton, 9,51);
-
-	//击杀数
-	CCString *TMeKillCCstring = CCString::createWithFormat("%d", MeKill);
-	std::string TMeKillstring = TMeKillCCstring->getCString();
-	Label *TMeKillNum = Label::createWithTTF(TMeKillstring, "fonts/Marker Felt.ttf", 32);
-	TMeKillNum->setPosition(Vec2(1750, 1030));
-	TMeKillNum->setScale(1.0f);
-	addChild(TMeKillNum, 10, 52);
-
-	//击杀图标
-	Sprite *KillTag = Sprite::create("kill.png");
-	KillTag->setPosition(Vec2(1700,1030));
-	KillTag->setScale(1.0f);
-	addChild(KillTag,10, 53);
-
-	//死亡数
-	CCString *TMeDeadCCstring = CCString::createWithFormat("%d", MeDead);
-	std::string TMeDeadstring = TMeDeadCCstring->getCString();
-	Label *TMeDeadNum = Label::createWithTTF(TMeDeadstring, "fonts/Marker Felt.ttf", 32);
-	TMeDeadNum->setPosition(Vec2(1860, 1030));
-	TMeDeadNum->setScale(1.0f);
-	addChild(TMeDeadNum, 10, 54);
-	
-	//死亡图标
-	Sprite *DeadTag = Sprite::create("die.png");
-	DeadTag->setPosition(Vec2(1810,1030));
-	DeadTag->setScale(1.0f);
-	addChild(DeadTag, 10, 56);
-
 	//金币数字
-	CCString *goldCCstring=CCString::createWithFormat("%d",MyGold);
+	CCString *goldCCstring=CCString::createWithFormat("%d",Gold);
 	std::string goldstring = goldCCstring->getCString();
 	Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 	GoldNum->setPosition(Vec2(50,450));
 	addChild(GoldNum, 9,55);
 
+	frameCacheH = SpriteFrameCache::getInstance();
+	frameCacheH->addSpriteFramesWithFile("heroh.plist", "heroh.png");
+	frameCacheS = SpriteFrameCache::getInstance();
+	frameCacheS->addSpriteFramesWithFile("heros.plist", "heros.png");
+	LBS = Sprite::create("LBS.png");
+	addChild(LBS,3);
 	hero = new heroPrint();
 	hero->initHeroSprite(8, Vec2(860, 540));
-	addChild(hero);
+	addChild(hero,0,2046);
 	Friend.pushBack(hero->heroSprite);
 
+	
 	
 	auto dispatcher = Director::getInstance()->getEventDispatcher();
 	auto myKeyListener = EventListenerKeyboard::create();	
@@ -146,14 +117,66 @@ bool MapScene::init()
 	this->schedule(schedule_selector(MapScene::Tower1), 0.1f);
 	this->schedule(schedule_selector(MapScene::Tower2), 0.1f);
 	this->schedule(schedule_selector(MapScene::soldersMake), 5.0f);
+	this->schedule(schedule_selector(MapScene::soldersMake1), 35.0f);
+	this->schedule(schedule_selector(MapScene::soldersMake2), 65.0f);
 	this->schedule(schedule_selector(MapScene::soldersContrl), 0.5f);
+	this->schedule(schedule_selector(MapScene::mark), 0.1f);
 	return true;
 }
-bool MapScene::onTouchBegan(Touch* touch, Event* unused_event)
+void MapScene::mark(float dt)
+{
+	
+	if (current == 0)
+	{
+		auto* movea = MoveTo::create(0.0, Vec2(-200,-200));
+		LBS->runAction(movea);
+		return;
+	}
+	else
+	{
+		object* cur = (object*)getChildByTag(current);
+		Vec2 tar_pos = cur->enemy->getPosition();
+		auto* moveb = MoveTo::create(0.0,Vec2(tar_pos.x,tar_pos.y+30));
+		LBS->runAction(moveb);
+
+	}
+}
+Animate* MapScene::createAnimateH(int direction, const char* action, int num, int id)
+{
+	
+	Vector <SpriteFrame*> frameArray;
+	for (int i = 1; i <= num; i++)
+	{
+		auto* frame = frameCacheH->getSpriteFrameByName(String::createWithFormat("hero_%d_%s%d%d.png", id, action, direction, i)->getCString());
+		frameArray.pushBack(frame);
+	}
+	Animation* animation = Animation::createWithSpriteFrames(frameArray);
+	animation->setLoops(-1);
+	animation->setDelayPerUnit(0.1f);
+	return Animate::create(animation);
+}
+
+Animate* MapScene::createAnimateS(int direction, const char* action, int num, int id,int loop)
 {
 
-	object* protect1 = (object*)getChildByTag(3);
+	Vector <SpriteFrame*> frameArray;
+	for (int i = 1; i <= num; i++)
+	{
+		auto* frame = frameCacheS->getSpriteFrameByName(String::createWithFormat("hero_%d_%s%d%d.png", id, action, direction, i)->getCString());
+		frameArray.pushBack(frame);
+	}
+	Animation* animation = Animation::createWithSpriteFrames(frameArray);
+	animation->setLoops(loop);
+	animation->setDelayPerUnit(0.1f);
+	return Animate::create(animation);
+}
+
+
+bool MapScene::onTouchBegan(Touch* touch, Event* unused_event)
+{
+	object* protect1 = (object*)getChildByTag(2045);
 	int c = protect1->getTag();
+	current = 0;
 	CCLOG("%d", c);
 	//Vec2 solders1=
 	hero->getDirection(hero->currentPosition, touch->getLocation());
@@ -179,7 +202,23 @@ bool MapScene::onTouchBegan(Touch* touch, Event* unused_event)
 				float distance = hero->getDistance(hero_position, soldersPostion);
 				if (distance <= 200)
 				{
-					hero->heroAttack(hero_position, soldersPostion);
+					int x = i+1023;
+					if (i == 0)
+					{
+						current = 2045;
+					}
+					else
+					{
+						current = x;
+					}
+				//	CCLOG("%d*****+***", current);
+					//hero->heroAttack(hero_position, soldersPostion);
+					hero->heroSprite->stopAllActions();
+					hero->heroSprite->runAction(createAnimateH(4,"att", 7, HeroID));
+					if(i!=0)
+					attactEnemy(hero_position, soldersPostion, 49,2046,x);
+					if (i == 0)
+						attactEnemy(hero_position, soldersPostion, 49, 2046, 2045);
 					return false;
 				}
 			}
@@ -250,10 +289,9 @@ void MapScene::heroIn(float dt)
 	}
 	return;
 }
-
 void MapScene::Tower1(float dt)
 {
-	object* protect1 = (object*)getChildByTag(3);
+	object* protect1 = (object*)getChildByTag(2045);
 	Vec2 Tower1_position = protect1->enemy->getPosition();
 	int range = 400;
 	if (chosenEnemy)
@@ -261,7 +299,20 @@ void MapScene::Tower1(float dt)
 		Vec2 objectPositon = chosenEnemy->getPosition();
 		if (getDistance(Tower1_position, objectPositon) <= range)
 		{
-			protect1->attactEnemy(Tower1_position, objectPositon, 0);
+			int n = 0;
+			for (int i = 0; i < Friend.size(); i++)
+			{
+				auto a = Friend.at(i);
+				if (a == chosenEnemy)
+				{
+					n = i; break;
+				}
+			}
+			if(n==1)
+			attactEnemy(Tower1_position, objectPositon, 0,2045,2046);
+			if(n>1)
+			attactEnemy(Tower1_position, objectPositon, 0, 2045, 2046+n);
+			return;
 		}
 		else
 			chosenEnemy = NULL;
@@ -276,14 +327,18 @@ void MapScene::Tower1(float dt)
 			if (getDistance(Tower1_position, objectPositon) <= range)
 			{
 				chosenEnemy = s;
-				protect1->attactEnemy(Tower1_position, objectPositon, 0);
+				if (i == 1)
+					attactEnemy(Tower1_position, objectPositon, 0, 2045, 2046);
+				if (i > 1)
+					attactEnemy(Tower1_position, objectPositon, 0, 2045, 2046 + i);
+				return;
 			}
 		}
 	}
 }
 void MapScene::Tower2(float dt)
 {
-	object* protect2 = (object*)getChildByTag(4);
+	object* protect2 = (object*)getChildByTag(2044);
 	Vec2 Tower1_position = protect2->enemy->getPosition();
 	int range = 400;
 	if (chosenFriend)
@@ -291,7 +346,20 @@ void MapScene::Tower2(float dt)
 		Vec2 objectPositon = chosenFriend->getPosition();
 		if (getDistance(Tower1_position, objectPositon) <= range)
 		{
-			protect2->attactEnemy(Tower1_position, objectPositon, 1);
+			int n = 0;
+			for (int i = 0; i < Enemy.size(); i++)
+			{
+				auto a = Enemy.at(i);
+				if (a == chosenFriend)
+				{
+					n = i; break;
+				}
+			}
+			if (n >= 1)
+			{
+				attactEnemy(Tower1_position, objectPositon, 1, 2044, 1023 + n);
+				return;
+			}
 		}
 		else
 			chosenFriend = NULL;
@@ -306,7 +374,8 @@ void MapScene::Tower2(float dt)
 			if (getDistance(Tower1_position, objectPositon) <= range)
 			{
 				chosenFriend = s;
-				protect2->attactEnemy(Tower1_position, objectPositon, 1);
+				attactEnemy(Tower1_position, objectPositon, 1,2044,1023+i);
+				return;
 			}
 		}
 	}
@@ -328,13 +397,13 @@ void MapScene::soldersMake(float dt)
 		Friend.pushBack(solder2->enemy);
 		Friend.pushBack(solder3->enemy);
 		auto solder11 = object::createObject();
-		addChild(solder11, 0, 2051);//1730 1020
+		addChild(solder11, 0, 1024);//1730 1020
 		solder11->start(4, Vec2(1600, 900));
 		auto solder22 = object::createObject();
-		addChild(solder22, 0, 2052);
+		addChild(solder22, 0, 1025);
 		solder22->start(4, Vec2(1650, 850));
 		auto solder33 = object::createObject();
-		addChild(solder33, 0, 2053);
+		addChild(solder33, 0, 1026);
 		solder33->start(4, Vec2(1550, 950));
 		Enemy.pushBack(solder11->enemy);
 		Enemy.pushBack(solder22->enemy);
@@ -342,8 +411,72 @@ void MapScene::soldersMake(float dt)
 		time++;
 	}
 }
+void MapScene::soldersMake1(float dt)
+{
+	if (time == 1)
+	{
+		auto solder4 = object::createObject();
+		addChild(solder4, 0, 2051);
+		solder4->start(3, Vec2(600, 500));
+		auto solder5 = object::createObject();
+		addChild(solder5, 0, 2052);
+		solder5->start(3, Vec2(650, 450));
+		auto solder6 = object::createObject();
+		addChild(solder6, 0, 2053);
+		solder6->start(3, Vec2(550, 550));
+		Friend.pushBack(solder4->enemy);
+		Friend.pushBack(solder5->enemy);
+		Friend.pushBack(solder6->enemy);
+		auto solder44 = object::createObject();
+		addChild(solder44, 0, 1027);//1730 1020
+		solder44->start(4, Vec2(1600, 900));
+		auto solder55 = object::createObject();
+		addChild(solder55, 0, 1028);
+		solder55->start(4, Vec2(1650, 850));
+		auto solder66 = object::createObject();
+		addChild(solder66, 0, 1029);
+		solder66->start(4, Vec2(1550, 950));
+		Enemy.pushBack(solder44->enemy);
+		Enemy.pushBack(solder55->enemy);
+		Enemy.pushBack(solder66->enemy);
+		time++;
+	}
+}
+void MapScene::soldersMake2(float dt)
+{
+	if (time == 2)
+	{
+		auto solder7 = object::createObject();
+		addChild(solder7, 0, 2054);
+		solder7->start(3, Vec2(600, 500));
+		auto solder8 = object::createObject();
+		addChild(solder8, 0, 2055);
+		solder8->start(3, Vec2(650, 450));
+		auto solder9 = object::createObject();
+		addChild(solder9, 0, 2056);
+		solder9->start(3, Vec2(550, 550));
+		Friend.pushBack(solder7->enemy);
+		Friend.pushBack(solder8->enemy);
+		Friend.pushBack(solder9->enemy);
+		auto solder77 = object::createObject();
+		addChild(solder77, 0, 1030);//1730 1020
+		solder77->start(4, Vec2(1600, 900));
+		auto solder88 = object::createObject();
+		addChild(solder88, 0, 1031);
+		solder88->start(4, Vec2(1650, 850));
+		auto solder99 = object::createObject();
+		addChild(solder99, 0, 1032);
+		solder99->start(4, Vec2(1550, 950));
+		Enemy.pushBack(solder77->enemy);
+		Enemy.pushBack(solder88->enemy);
+		Enemy.pushBack(solder99->enemy);
+		time++;
+	}
+}
 void MapScene::soldersContrl(float dt)
 {
+
+
 	if (Friend.size() >= 2)
 	{
 		for (int i = 2; i < Friend.size(); i++)
@@ -352,11 +485,15 @@ void MapScene::soldersContrl(float dt)
 			Size s = a->getContentSize();
 			//Rect rect = Rect(0, 0, s.width, s.height);
 			object* solder = (object*)getChildByTag(2046 + i);
+			auto bloodLine = solder->Loading;
+			if (solder->blood <= 0)
+				continue;
 			Vec2 soldersPostion = a->getPosition();
 			if ((i + 1) % 3 == 0)
 			{
 				float distance = getDistance(soldersPostion, Vec2(1600, 900));
 				auto* move = MoveTo::create((float)distance / 50, Vec2(1600, 900));
+				auto* moveBlood = MoveTo::create((float)distance / 50, Vec2(1600, 950));
 				auto* sequence = Sequence::create(move, NULL);
 				int min; float minDis = 200000;
 				for (int n = 0; n < Enemy.size(); n++)
@@ -364,117 +501,140 @@ void MapScene::soldersContrl(float dt)
 					auto b = Enemy.at(n);
 					Size t = b->getContentSize();
 					float minDistance = getDistance(soldersPostion, b->getPosition());
-					CCLOG("*%f*", minDistance);
 					if (minDis > minDistance)
 					{
 						minDis = minDistance;
 						min = n;
 					}
 				}
-				CCLOG("                        %d", min);
 				if (minDis <= 100)
 				{
 					a->stopAllActions();
-					solder->attactEnemy(soldersPostion, Enemy.at(min)->getPosition(), i);
+					a->runAction(createAnimateS(4, "att", 14, 4,1));
+					bloodLine->stopAllActions();
+					if(min!=0)
+					attactEnemy(soldersPostion, Enemy.at(min)->getPosition(), i,2046+i,1023+min);
+					else
+						attactEnemy(soldersPostion, Enemy.at(min)->getPosition(), i, 2046 + i, 2045);
 				}
 				if (minDis <= 200 && minDis > 100)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(4,"run", 8, 4,-1));
 					float Distance = getDistance(soldersPostion, Enemy.at(min)->getPosition());
 					auto* Move = MoveTo::create((float)Distance / 50, Enemy.at(min)->getPosition());
+					auto* MoveBlood= MoveTo::create((float)Distance / 50, Vec2(Enemy.at(min)->getPosition().x, Enemy.at(min)->getPosition().y+50));
 					a->runAction(Move);
+					bloodLine->runAction(MoveBlood);
 
 				}
 				if (minDis > 200)
 				{
 					a->stopAllActions();
+					bloodLine-> stopAllActions();
+					a->runAction(createAnimateS(4, "run", 8, 4,-1));
 					a->runAction(sequence);
+					bloodLine->runAction(moveBlood);
 				}
 			}
 			if ((i + 1) % 3 == 1)
 			{
 				float distance = getDistance(soldersPostion, Vec2(1650, 850));
 				auto* move = MoveTo::create((float)distance / 50, Vec2(1650, 850));
+				auto* moveBlood = MoveTo::create((float)distance / 50, Vec2(1650, 850));
 				auto* sequence = Sequence::create(move, NULL);
-				/*auto finishAction()
-				{
-					->stopAllActions();
-				};*/
-				//auto funcall1 = CallFunc::create(CC_CALLBACK_0(finishAction, this));
 				int min; float minDis = 200000;
 				for (int n = 0; n < Enemy.size(); n++)
 				{
 					auto b = Enemy.at(n);
 					Size t = b->getContentSize();
 					float minDistance = getDistance(soldersPostion, b->getPosition());
-					CCLOG("*%f*", minDistance);
+
 					if (minDis > minDistance)
 					{
 						minDis = minDistance;
 						min = n;
 					}
 				}
-				CCLOG("                        %d", min);
 				if (minDis <= 100)
 				{
 					a->stopAllActions();
-					solder->attactEnemy(soldersPostion, Enemy.at(min)->getPosition(), i);
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(4, "att", 14, 5,1));
+					if (min != 0)
+						attactEnemy(soldersPostion, Enemy.at(min)->getPosition(), i, 2046 + i, 1023 + min);
+					else
+						attactEnemy(soldersPostion, Enemy.at(min)->getPosition(), i, 2046 + i, 2045);
 				}
 				if (minDis <= 200 && minDis > 100)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(4, "run", 8, 5,-1));
 					float Distance = getDistance(soldersPostion, Enemy.at(min)->getPosition());
 					auto* Move = MoveTo::create((float)Distance / 50, Enemy.at(min)->getPosition());
+					auto* MoveBlood= MoveTo::create((float)Distance / 50, Vec2(Enemy.at(min)->getPosition().x, Enemy.at(min)->getPosition().y+50));
 					a->runAction(Move);
+					bloodLine->runAction(MoveBlood);
 
 				}
 				if (minDis > 200)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(4, "run", 8, 5,-1));
 					a->runAction(sequence);
+					bloodLine->runAction(moveBlood);
 				}
 			}
 			if ((i + 1) % 3 == 2)
 			{
 				float distance = getDistance(soldersPostion, Vec2(1550, 950));
 				auto* move = MoveTo::create((float)distance / 50, Vec2(1550, 950));
+				auto* moveBlood = MoveTo::create((float)distance / 50, Vec2(1550, 950));
 				auto* sequence = Sequence::create(move, NULL);
-				/*auto finishAction()
-				{
-					->stopAllActions();
-				};*/
-				//auto funcall1 = CallFunc::create(CC_CALLBACK_0(finishAction, this));
 				int min; float minDis = 200000;
 				for (int n = 0; n < Enemy.size(); n++)
 				{
 					auto b = Enemy.at(n);
 					Size t = b->getContentSize();
 					float minDistance = getDistance(soldersPostion, b->getPosition());
-					CCLOG("*%f*", minDistance);
 					if (minDis > minDistance)
 					{
 						minDis = minDistance;
 						min = n;
 					}
 				}
-				CCLOG("                        %d", min);
 				if (minDis <= 100)
 				{
 					a->stopAllActions();
-					solder->attactEnemy(soldersPostion, Enemy.at(min)->getPosition(), i);
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(4, "att", 14, 6,1));
+					if (min != 0)
+						attactEnemy(soldersPostion, Enemy.at(min)->getPosition(), i, 2046 + i, 1023 + min);
+					else
+						attactEnemy(soldersPostion, Enemy.at(min)->getPosition(), i, 2046 + i, 2045);
 				}
 				if (minDis <= 200 && minDis > 100)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(4, "run", 8, 6,-1));
 					float Distance = getDistance(soldersPostion, Enemy.at(min)->getPosition());
 					auto* Move = MoveTo::create((float)Distance / 50, Enemy.at(min)->getPosition());
+					auto* MoveBlood = MoveTo::create((float)Distance / 50, Vec2(Enemy.at(min)->getPosition().x, Enemy.at(min)->getPosition().y + 50));
 					a->runAction(Move);
+					bloodLine->runAction(MoveBlood);
 
 				}
 				if (minDis > 200)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(4, "run", 8, 6,-1));
 					a->runAction(sequence);
+					bloodLine->runAction(moveBlood);
 				}
 			}
 		}
@@ -486,133 +646,162 @@ void MapScene::soldersContrl(float dt)
 			auto a = Enemy.at(i);
 			Size s = a->getContentSize();
 			//Rect rect = Rect(0, 0, s.width, s.height);
-			object* solder = (object*)getChildByTag(2050 + i);
+			object* solder = (object*)getChildByTag(1023 + i);
+			auto bloodLine = solder->Loading;
+			//CCLOG("**%d**", solder->blood);
+			if (solder->blood <= 0)
+				continue;
 			Vec2 soldersPostion = a->getPosition();
 			if ((i + 2) % 3 == 0)
 			{
 				float distance = getDistance(Vec2(600, 500), soldersPostion);
 				auto* move = MoveTo::create((float)distance / 50, Vec2(600, 500));
+				auto* moveBlood = MoveTo::create((float)distance / 50, Vec2(600, 550));
 				auto* sequence = Sequence::create(move, NULL);
-				/*auto finishAction()
-				{
-					->stopAllActions();
-				};*/
-				//auto funcall1 = CallFunc::create(CC_CALLBACK_0(finishAction, this));
 				int min; float minDis = 200000;
 				for (int n = 0; n < Friend.size(); n++)
 				{
 					auto b = Friend.at(n);
 					Size t = b->getContentSize();
 					float minDistance = getDistance(soldersPostion, b->getPosition());
-					CCLOG("*%f*", minDistance);
 					if (minDis > minDistance)
 					{
 						minDis = minDistance;
 						min = n;
 					}
 				}
-				CCLOG("                        %d", min);
 				if (minDis <= 200 && minDis > 100)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(2, "run", 8, 4, -1));
 					float Distance = getDistance(soldersPostion, Friend.at(min)->getPosition());
 					auto* Move = MoveTo::create((float)Distance / 50, Friend.at(min)->getPosition());
+					auto* MoveBlood = MoveTo::create((float)Distance / 50, Vec2(Friend.at(min)->getPosition().x, Friend.at(min)->getPosition().y + 50));
 					a->runAction(Move);
+					bloodLine->runAction(MoveBlood);
 
 				}
 				if (minDis <= 100)
 				{
 					a->stopAllActions();
-					solder->attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4);
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(2, "att", 14, 4, 1));
+					if (min > 1)
+						attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4, 1023 + i, 2046 + min);
+					if(min==0)
+						attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4, 1023 + i, 2044);
+					if(min==1)
+					attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4, 1023 + i, 2046);
 				}
 				if (minDis > 200)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(2, "run", 8, 4,-1));
 					a->runAction(sequence);
+					bloodLine->runAction(moveBlood);
 				}
 			}
 			if ((i + 2) % 3 == 1)
 			{
 				float Distance = getDistance(Vec2(650, 450), soldersPostion);
 				auto* move = MoveTo::create((float)Distance / 50, Vec2(650, 450));
+				auto* moveBlood = MoveTo::create((float)Distance / 50, Vec2(650, 500));
 				auto* sequence = Sequence::create(move, NULL);
-				/*auto finishAction()
-				{
-					->stopAllActions();
-				};*/
-				//auto funcall1 = CallFunc::create(CC_CALLBACK_0(finishAction, this));
 				int min; float minDis = 200000;
 				for (int n = 0; n < Friend.size(); n++)
 				{
 					auto b = Friend.at(n);
 					Size t = b->getContentSize();
 					float minDistance = getDistance(soldersPostion, b->getPosition());
-					CCLOG("*%f*", minDistance);
 					if (minDis > minDistance)
 					{
 						minDis = minDistance;
 						min = n;
 					}
 				}
-				CCLOG("                        %d", min);
 				if (minDis <= 200 && minDis > 100)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(2, "run", 8, 5, -1));
 					float distance = getDistance(soldersPostion, Friend.at(min)->getPosition());
 					auto* Move = MoveTo::create((float)distance / 50, Friend.at(min)->getPosition());
+					auto* MoveBlood = MoveTo::create((float)Distance / 50, Vec2(Friend.at(min)->getPosition().x, Friend.at(min)->getPosition().y + 50));
 					a->runAction(Move);
+					bloodLine->runAction(MoveBlood);
 				}
 				if (minDis <= 100)
 				{
 					a->stopAllActions();
-					solder->attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4);
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(2, "att", 14, 5, 1));
+					if (min > 1)
+						attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4, 1023 + i, 2046 + min);
+					if (min == 0)
+						attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4, 1023 + i, 2044);
+					if (min == 1)
+						attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4, 1023 + i, 2046);
 				}
 				if (minDis > 200)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(2, "run", 8, 5,-1));
 					a->runAction(sequence);
+					bloodLine->runAction(moveBlood);
 				}
 			}
 			if ((i + 2) % 3 == 2)
 			{
 				float distance = getDistance(Vec2(550, 550), soldersPostion);
 				auto* move = MoveTo::create((float)distance / 50, Vec2(550, 550));
+				auto* moveBlood = MoveTo::create((float)distance / 50, Vec2(550, 600));
 				auto* sequence = Sequence::create(move, NULL);
-				/*auto finishAction()
-				{
-					->stopAllActions();
-				};*/
-				//auto funcall1 = CallFunc::create(CC_CALLBACK_0(finishAction, this));
 				int min; float minDis = 200000;
 				for (int n = 0; n < Friend.size(); n++)
 				{
 					auto b = Friend.at(n);
 					Size t = b->getContentSize();
 					float minDistance = getDistance(soldersPostion, b->getPosition());
-					CCLOG("*%f*", minDistance);
 					if (minDis > minDistance)
 					{
 						minDis = minDistance;
 						min = n;
 					}
 				}
-				CCLOG("                        %d", min);
 				if (minDis <= 200 && minDis > 100)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(2, "run", 8, 6, -1));
 					float Distance = getDistance(soldersPostion, Friend.at(min)->getPosition());
 					auto* Move = MoveTo::create((float)Distance / 50, Friend.at(min)->getPosition());
+					auto* MoveBlood = MoveTo::create((float)Distance / 50, Vec2(Friend.at(min)->getPosition().x, Friend.at(min)->getPosition().y + 50));
 					a->runAction(Move);
+					bloodLine->runAction(MoveBlood);
 				}
 				if (minDis <= 100)
 				{
 					a->stopAllActions();
-					solder->attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4);
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(2, "att", 14, 6, 1));
+					bloodLine->stopAllActions();
+					if (min > 1)
+						attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4, 1023 + i, 2046 + min);
+					if (min == 0)
+						attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4, 1023 + i, 2044);
+					if (min == 1)
+						attactEnemy(soldersPostion, Friend.at(min)->getPosition(), i + 4, 1023 + i, 2046);
 				}
 				if (minDis > 200)
 				{
 					a->stopAllActions();
+					bloodLine->stopAllActions();
+					a->runAction(createAnimateS(2, "run", 8, 6,-1));
 					a->runAction(sequence);
+					bloodLine->runAction(moveBlood);
 				}
 			}
 		}
@@ -631,31 +820,82 @@ Vec2 MapScene::tiledpos(Vec2 pos)
 	int y = ((map->getTileSize().height * map->getMapSize().height) - pos.y) / map->getTileSize().height;
 	return Vec2(x, y);
 }
+void MapScene::attactEnemy(Vec2 pos, Vec2 Epos, int num,int tag1,int tag2)
+{
+	if (use[num] == 1) return;
+	float distance = getDistance(pos, Epos);
+	auto delayTime = DelayTime::create(1.0f);
+	auto hit = Sprite::create("AA.jpg");
+	hit->setScale(1.0f);
+	hit->setPosition(pos);
+	addChild(hit);
+	use[num] = 1;
+	const int m = num;
+	const int x = tag1;
+	const int y = tag2;
+	auto * move = MoveTo::create((float)distance / 1000, Epos);
+	auto * remove = MoveTo::create(0, Vec2(-2000, -2000));
+	auto funcall1 = CallFunc::create(CC_CALLBACK_0(MapScene::finishAttack, this,x,y ));
+	auto funcall2 = CallFunc::create(CC_CALLBACK_0(MapScene::finishRunAction, this, m));
+	auto * sequence = Sequence::create(move, remove, funcall1,delayTime, funcall2, NULL);
+	hit->runAction(sequence);
+}
+void MapScene::finishRunAction(const int num)
+{
+	use[num] = 0;
+}
 
+void MapScene::finishAttack(const int tag1, const int tag2)
+{
+
+	if (tag1 != 2046)
+	{
+		object* solder1 = (object*)getChildByTag(tag1);
+		//读取属性及计算
+		if (tag2 != 2046)
+		{
+			object* solder2 = (object*)getChildByTag(tag2);
+			solder2->blood--;
+			float cur = (float)solder2->blood*10;
+			solder2->Loading->setPercentage(cur);
+			if (solder2->blood <= 0)
+				solder2->enemy->setPosition(-2000, -2000);
+		}
+		else
+		{
+			heroPrint* hero = (heroPrint*)getChildByTag(2046);
+			hero->blood--;
+			if (hero->blood <= 0)
+				hero->heroSprite->setPosition(960, 540);
+		}
+	 }
+	if(tag1==2046)
+	{
+		CCLOG("**%d", tag2);
+		heroPrint* hero = (heroPrint*)getChildByTag(2046);
+		//读取属性及计算
+		object* solder2 = (object*)getChildByTag(tag2);
+		solder2->blood--;
+		if(solder2->blood<=0)
+			solder2->enemy->setPosition(-2000, -2000);
+	}
+}
 void MapScene::EnterHelloWorldScene(Ref *pSenderBack)
 {
 	//全局重新初始化
-	SimpleAudioEngine::getInstance()->stopBackgroundMusic(true);
-	MyHeroID = 0;
-	MyGold = 10000;
-	MyBuyWeaponNum = 0;
+	HeroID = 0;
+	Gold = 10000;
+	BuyWeaponNum = 0;
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HelloWorld::createScene()));
 }
 
 
-
-void MapScene::ShopCall(Ref *sender, Widget::TouchEventType controlevent)
+void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
-		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
-		//战绩图标不可触发
-		Button *tmp1 = (Button *)this->getChildByTag(51);
-		tmp1->setTouchEnabled(false);
-		//商城图标不可触发
-		Button *tmp2 = (Button *)this->getChildByTag(50);
-		tmp2->setTouchEnabled(false);
-
+		Button *tmp = (Button *)this->getChildByTag(50);
+		tmp->setTouchEnabled(false);
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -801,8 +1041,7 @@ void MapScene::ShopCall(Ref *sender, Widget::TouchEventType controlevent)
 		Equipment6->setScale(0.8f);
 		addChild(Equipment6, 12, 76);
 
-		for (int p = 1; p <= MyBuyWeaponNum; ++p)
-
+		for (int p = 1; p <= BuyWeaponNum; ++p)
 		{
 			Sprite *Tmp = (Sprite *)this->getChildByTag(40+p);
 			Tmp->setVisible(true);
@@ -812,270 +1051,11 @@ void MapScene::ShopCall(Ref *sender, Widget::TouchEventType controlevent)
 }
 
 
-void MapScene::ZhanjiCall(Ref *sender, Widget::TouchEventType controlevent)
-{
-	if (controlevent == Widget::TouchEventType::ENDED)
-	{
-		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
-		//战绩图标不可触发
-		Button *tmp1 = (Button *)this->getChildByTag(51);
-		tmp1->setTouchEnabled(false);
-		//商城图标不可触发
-		Button *tmp2 = (Button *)this->getChildByTag(50);
-		tmp2->setTouchEnabled(false);
-
-		auto visibleSize = Director::getInstance()->getVisibleSize();
-		Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-		auto *chnString = Dictionary::createWithContentsOfFile("CHN_String.xml");
-		const char *KillStr = ((String *)chnString->objectForKey("Kill_Text"))->getCString();
-		const char *DeadStr = ((String *)chnString->objectForKey("Dead_Text"))->getCString();
-		const char *ZhanjiStr= ((String *)chnString->objectForKey("Zhanji_Text"))->getCString();
-
-		Button *ZhanjiBackButton = Button::create();
-		ZhanjiBackButton->loadTextures("ShopBack.png", "ShopBack.png", "");
-		ZhanjiBackButton->setPosition(Vec2(1665, 910));
-		ZhanjiBackButton->addTouchEventListener(CC_CALLBACK_2(MapScene::ZhanjiBack, this));
-		ZhanjiBackButton->setScale(0.72f);
-		addChild(ZhanjiBackButton, 14, 80);
-
-		Sprite *ZhanjiBackGround;
-		ZhanjiBackGround = Sprite::create("Shopbackground.png");
-		ZhanjiBackGround->setPosition(Vec2(960, 550));
-		ZhanjiBackGround->setScale(0.85f);
-		ZhanjiBackGround->setOpacity(230);
-		addChild(ZhanjiBackGround, 10, 81);
-
-		Sprite *LittleTag = Sprite::create("little.png");
-		LittleTag->setPosition(Vec2(180,900));
-		addChild(LittleTag, 14, 82);
-
-
-		Label *Zhanjilabel = Label::create(ZhanjiStr,"Arial" ,34 );
-		Zhanjilabel->setPosition(Vec2(250, 900));
-		addChild(Zhanjilabel, 14, 97);
-
-		//我方头像
-		Sprite *MeAvatar;
-		std::string MeAvatarName = StringUtils::format("Hero%d_Avatar.png", MyHeroID);
-		MeAvatar = Sprite::create(MeAvatarName);
-		if (MeAvatarName == "Hero1_Avatar.png")
-		{
-			MeAvatar->setScale(0.3f);
-		}
-		else
-		{
-			MeAvatar->setScale(2.0f);
-		}
-		MeAvatar->setPosition(Vec2(origin.x + visibleSize.width*0.25, origin.y + visibleSize.height*0.5));
-		addChild(MeAvatar, 12, 83);
-
-		//对方头像
-		Sprite *YouAvatar;
-		std::string YouAvatarName = StringUtils::format("Hero%d_Avatar.png", YourHeroID);
-		YouAvatar = Sprite::create(YouAvatarName);
-		if (YouAvatarName == "Hero1_Avatar.png")
-		{
-			YouAvatar->setScale(0.3f);
-		}
-		else
-		{
-			YouAvatar->setScale(2.0f);
-		}
-		YouAvatar->setPosition(Vec2(origin.x + visibleSize.width*0.725, origin.y + visibleSize.height*0.5));
-		addChild(YouAvatar, 12, 84);
-
-		//我方空方案
-		Sprite *MyEquipment1 = Sprite::create("kong.png");
-		MyEquipment1->setPosition(Vec2(250, 300));
-		MyEquipment1->setScale(0.6f);
-		addChild(MyEquipment1, 12, 201);
-
-		Sprite *MyEquipment2 = Sprite::create("kong.png");
-		MyEquipment2->setPosition(Vec2(350, 300));
-		MyEquipment2->setScale(0.6f);
-		addChild(MyEquipment2, 12, 202);
-
-		Sprite *MyEquipment3 = Sprite::create("kong.png");
-		MyEquipment3->setPosition(Vec2(450, 300));
-		MyEquipment3->setScale(0.6f);
-		addChild(MyEquipment3, 12, 203);
-
-		Sprite *MyEquipment4 = Sprite::create("kong.png");
-		MyEquipment4->setPosition(Vec2(550, 300));
-		MyEquipment4->setScale(0.6f);
-		addChild(MyEquipment4, 12, 204);
-
-		Sprite *MyEquipment5 = Sprite::create("kong.png");
-		MyEquipment5->setPosition(Vec2(650, 300));
-		MyEquipment5->setScale(0.6f);
-		addChild(MyEquipment5, 12, 205);
-
-		Sprite *MyEquipment6 = Sprite::create("kong.png");
-		MyEquipment6->setPosition(Vec2(750, 300));
-		MyEquipment6->setScale(0.6f);
-		addChild(MyEquipment6, 12, 206);
-
-		//对方空方案
-		Sprite *YouEquipment1 = Sprite::create("kong.png");
-		YouEquipment1->setPosition(Vec2(1150, 300));
-		YouEquipment1->setScale(0.6f);
-		addChild(YouEquipment1, 12, 207);
-
-		Sprite *YouEquipment2 = Sprite::create("kong.png");
-		YouEquipment2->setPosition(Vec2(1250, 300));
-		YouEquipment2->setScale(0.6f);
-		addChild(YouEquipment2, 12, 208);
-
-		Sprite *YouEquipment3 = Sprite::create("kong.png");
-		YouEquipment3->setPosition(Vec2(1350, 300));
-		YouEquipment3->setScale(0.6f);
-		addChild(YouEquipment3, 12, 209);
-
-		Sprite *YouEquipment4 = Sprite::create("kong.png");
-		YouEquipment4->setPosition(Vec2(1450, 300));
-		YouEquipment4->setScale(0.6f);
-		addChild(YouEquipment4, 12, 210);
-
-		Sprite *YouEquipment5 = Sprite::create("kong.png");
-		YouEquipment5->setPosition(Vec2(1550, 300));
-		YouEquipment5->setScale(0.6f);
-		addChild(YouEquipment5, 12, 211);
-
-		Sprite *YouEquipment6 = Sprite::create("kong.png");
-		YouEquipment6->setPosition(Vec2(1650, 300));
-		YouEquipment6->setScale(0.6f);
-		addChild(YouEquipment6, 12, 212);
-
-		//设置我方装备可见
-		for (int q = 1; q <= MyBuyWeaponNum; ++q)
-		{
-			Sprite *TMP = (Sprite *)this->getChildByTag(810+q);
-			TMP->setVisible(true);
-		}
-
-		//设置对方装备可见
-		/*for (int q = 1; q <= YouBuyWeaponNum; ++q)
-		{
-			Sprite *TMP = (Sprite *)this->getChildByTag();
-			TMP->setVisible(true);
-		}*/
-
-		//我方金币
-		auto MyGoldZhanji = Sprite::create("gold.png");
-		MyGoldZhanji->setPosition(Vec2(450,200));
-		MyGoldZhanji->setScale(1.0f);
-		addChild(MyGoldZhanji, 14, 85);
-
-		CCString *MygoldCCstringZhanji = CCString::createWithFormat("%d", MyGold);
-		std::string MygoldstringZhanji = MygoldCCstringZhanji->getCString();
-		Label *MyGoldNumZhanji = Label::createWithTTF(MygoldstringZhanji, "fonts/Marker Felt.ttf", 32);
-		MyGoldNumZhanji->setPosition(Vec2(520,200));
-		MyGoldNumZhanji->setScale(1.0f);
-		addChild(MyGoldNumZhanji, 14, 86);
-
-		//对方金币
-		auto YouGoldZhanji = Sprite::create("gold.png");
-		YouGoldZhanji->setPosition(Vec2(1350, 200));
-		YouGoldZhanji->setScale(1.0f);
-		addChild(YouGoldZhanji, 14, 87);
-
-		CCString *YougoldCCstringZhanji = CCString::createWithFormat("%d", YourGold);
-		std::string YougoldstringZhanji = YougoldCCstringZhanji->getCString();
-		Label *YouGoldNumZhanji = Label::createWithTTF(YougoldstringZhanji, "fonts/Marker Felt.ttf", 32);
-		YouGoldNumZhanji->setPosition(Vec2(1420, 200));
-		YouGoldNumZhanji->setScale(1.0f);
-		addChild(YouGoldNumZhanji, 14, 88);
-
-		//我方击杀
-
-		auto MeKillstr = Label::create(KillStr, "Arial", 36);
-		MeKillstr->setPosition(Vec2(300,800));
-		addChild(MeKillstr, 14, 89);
-
-		CCString *MeKillCCstring = CCString::createWithFormat("%d", MeKill);
-		std::string MeKillstring = MeKillCCstring->getCString();
-		Label *MeKillNum = Label::createWithTTF(MeKillstring, "fonts/Marker Felt.ttf", 35);
-		MeKillNum->setPosition(Vec2(300, 750));
-		MeKillNum->setScale(1.0f);
-		addChild(MeKillNum, 14, 90);
-
-		
-		//我方死亡
-		auto MeDeadstr = Label::create(DeadStr, "Arial", 36);
-		MeDeadstr->setPosition(Vec2(700,800));
-		addChild(MeDeadstr, 14, 91);
-
-		CCString *MeDeadCCstring = CCString::createWithFormat("%d",MeDead);
-		std::string MeDeadstring = MeDeadCCstring->getCString();
-		Label *MeDeadNum = Label::createWithTTF(MeDeadstring, "fonts/Marker Felt.ttf", 35);
-		MeDeadNum->setPosition(Vec2(700, 750));
-		MeDeadNum->setScale(1.0f);
-		addChild(MeDeadNum, 14, 92);
-
-		//对方击杀
-
-		auto YouKillstr = Label::create(KillStr, "Arial", 36);
-		YouKillstr->setPosition(Vec2(1200, 800));
-		addChild(YouKillstr, 14, 93);
-
-		CCString *YouKillCCstring = CCString::createWithFormat("%d", YouKill);
-		std::string YouKillstring = YouKillCCstring->getCString();
-		Label *YouKillNum = Label::createWithTTF(YouKillstring, "fonts/Marker Felt.ttf", 35);
-		YouKillNum->setPosition(Vec2(1200, 750));
-		YouKillNum->setScale(1.0f);
-		addChild(YouKillNum, 14, 94);
-
-
-		//对方死亡
-		auto YouDeadstr = Label::create(DeadStr, "Arial", 36);
-		YouDeadstr->setPosition(Vec2(1600, 800));
-		addChild(YouDeadstr, 14, 95);
-
-		CCString *YouDeadCCstring = CCString::createWithFormat("%d", YouDead);
-		std::string YouDeadstring = YouDeadCCstring->getCString();
-		Label *YouDeadNum = Label::createWithTTF(YouDeadstring, "fonts/Marker Felt.ttf", 35);
-		YouDeadNum->setPosition(Vec2(1600, 750));
-		YouDeadNum->setScale(1.0f);
-		addChild(YouDeadNum, 14, 96);
-
-	}
-}
-
-void MapScene::ZhanjiBack(Ref *sender, Widget::TouchEventType controlevent)
-{
-	if (controlevent == Widget::TouchEventType::ENDED)
-	{
-		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
-		for (int i = 0; i <= 17; ++i)
-		{
-			removeChildByTag(80 + i);
-		}
-		for (int i = 1; i <= 12; ++i)
-		{
-			removeChildByTag(200 + i);
-		}
-		for (int j = 1; j <= MyBuyWeaponNum; ++j)
-		{
-			Sprite *TMP = (Sprite *)this->getChildByTag(810 + j);
-			TMP->setVisible(false);
-		}
-		//恢复商城可触发
-		Button *tmp1 = (Button *)this->getChildByTag(50);
-		tmp1->setTouchEnabled(true);
-		//恢复战绩可触发
-		Button *tmp2 = (Button *)this->getChildByTag(51);
-		tmp2->setTouchEnabled(true);
-	}
-}
-
-
 
 void MapScene::Shopbuy1(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
-		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1101,8 +1081,7 @@ void MapScene::Shopbuy1(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon1Detail->setScale(0.7f);
 		addChild(Weapon1Detail, 13,1011);
 
-		if (MyGold >= 1740&&MyBuyWeaponNum<=5)
-
+		if (Gold >= 1740&&BuyWeaponNum<=5)
 		{
 			Button *BuyButton11=Button::create();
 			BuyButton11->loadTextures("buy1.png","buy1.png","");
@@ -1112,8 +1091,7 @@ void MapScene::Shopbuy1(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton11, 14, 1012);
 		}
 
-		if (MyGold < 1740 || MyBuyWeaponNum >= 6)
-
+		if (Gold < 1740 || BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton12;
 			BuyButton12 = Sprite::create("buy2.png");
@@ -1129,7 +1107,6 @@ void MapScene::Shopbuy2(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
-		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1155,8 +1132,7 @@ void MapScene::Shopbuy2(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon2Detail->setScale(0.7f);
 		addChild(Weapon2Detail, 13,1021);
 
-		if (MyGold >= 2140 && MyBuyWeaponNum <= 5)
-
+		if (Gold >= 2140 && BuyWeaponNum <= 5)
 		{
 			Button *BuyButton21=Button::create();
 			BuyButton21->loadTextures("buy1.png", "buy1.png", "");
@@ -1166,8 +1142,7 @@ void MapScene::Shopbuy2(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton21, 14, 1022);
 		}
 
-		if (MyGold < 2140 || MyBuyWeaponNum >= 6)
-
+		if (Gold < 2140 || BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton22;
 			BuyButton22 = Sprite::create("buy2.png");
@@ -1182,7 +1157,6 @@ void MapScene::Shopbuy3(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
-		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1208,8 +1182,8 @@ void MapScene::Shopbuy3(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon3Detail->setScale(0.7f);
 		addChild(Weapon3Detail, 13, 1031);
 
-		if (MyGold >= 2300 && MyBuyWeaponNum <= 5)
 
+		if (Gold >= 2300 && BuyWeaponNum <= 5)
 		{
 			Button *BuyButton31=Button::create();
 			BuyButton31->loadTextures("buy1.png", "buy1.png", "");
@@ -1219,8 +1193,7 @@ void MapScene::Shopbuy3(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton31, 14, 1032);
 		}
 
-		if (MyGold < 2300 || MyBuyWeaponNum >= 6)
-
+		if (Gold < 2300 || BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton32;
 			BuyButton32 = Sprite::create("buy2.png");
@@ -1235,7 +1208,6 @@ void MapScene::Shopbuy4(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
-		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1261,8 +1233,8 @@ void MapScene::Shopbuy4(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon4Detail->setScale(0.7f);
 		addChild(Weapon4Detail, 13, 1041);
 
-		if (MyGold >= 2990 && MyBuyWeaponNum <= 5)
 
+		if (Gold >= 2990 && BuyWeaponNum <= 5)
 		{
 			Button *BuyButton41=Button::create();
 			BuyButton41->loadTextures("buy1.png", "buy1.png", "");
@@ -1272,8 +1244,7 @@ void MapScene::Shopbuy4(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton41, 14, 1042);
 		}
 
-		if (MyGold < 2990 || MyBuyWeaponNum >= 6)
-
+		if (Gold < 2990 || BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton42;
 			BuyButton42 = Sprite::create("buy2.png");
@@ -1288,7 +1259,6 @@ void MapScene::Shopbuy5(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
-		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1314,8 +1284,8 @@ void MapScene::Shopbuy5(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon5Detail->setScale(0.7f);
 		addChild(Weapon5Detail, 13, 1051);
 
-		if (MyGold >= 900 && MyBuyWeaponNum <= 5)
 
+		if (Gold >= 900 && BuyWeaponNum <= 5)
 		{
 			Button *BuyButton51=Button::create();
 			BuyButton51->loadTextures("buy1.png", "buy1.png", "");
@@ -1325,8 +1295,7 @@ void MapScene::Shopbuy5(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton51, 14, 1052);
 		}
 
-		if (MyGold < 900 || MyBuyWeaponNum >= 6)
-
+		if (Gold < 900 || BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton52;
 			BuyButton52 = Sprite::create("buy2.png");
@@ -1341,7 +1310,6 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
-		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1367,8 +1335,8 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon6Detail->setScale(0.7f);
 		addChild(Weapon6Detail, 13, 1061);
 
-		if (MyGold >= 710 && MyBuyWeaponNum <= 5)
 
+		if (Gold >= 710 && BuyWeaponNum <= 5)
 		{
 			Button *BuyButton61=Button::create();
 			BuyButton61->loadTextures("buy1.png", "buy1.png", "");
@@ -1378,8 +1346,7 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton61, 14, 1062);
 		}
 
-		if (MyGold < 710||MyBuyWeaponNum >= 6)
-
+		if (Gold < 710||BuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton62;
 			BuyButton62 = Sprite::create("buy2.png");
@@ -1394,24 +1361,16 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 //武器一确认购买
 void MapScene::Buyit1(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum<=5)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum<=5)
 	{
-		MyBuyWeaponNum++;
-		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
+		BuyWeaponNum++;
 		Sprite *MyEquip1 = Sprite::create("weapon1.png");
-		MyEquip1->setPosition(Vec2(350+MyBuyWeaponNum*150,200));
+		MyEquip1->setPosition(Vec2(350+BuyWeaponNum*150,200));
 		MyEquip1->setScale(0.7f);
-		addChild(MyEquip1, 14, 40 + MyBuyWeaponNum);
-
-		Sprite *MyEquip1Zhanji = Sprite::create("weapon1.png");
-		MyEquip1Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
-		MyEquip1Zhanji->setScale(0.5f);
-		MyEquip1Zhanji->setVisible(false);
-		addChild(MyEquip1Zhanji, 14, 810 + MyBuyWeaponNum);
-
-		MyGold -= 1740;
+		addChild(MyEquip1, 14, 40 + BuyWeaponNum);
+		Gold -= 1740;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1440,24 +1399,16 @@ void MapScene::Buyit1(Ref *sender, Widget::TouchEventType controlevent)
 //武器二确认购买
 void MapScene::Buyit2(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
 	{
-		MyBuyWeaponNum++;
-		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
+		BuyWeaponNum++;
 		Sprite *MyEquip2 = Sprite::create("weapon2.png");
-		MyEquip2->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
+		MyEquip2->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
 		MyEquip2->setScale(0.7f);
-		addChild(MyEquip2, 14, 40+MyBuyWeaponNum);
-
-		Sprite *MyEquip2Zhanji = Sprite::create("weapon2.png");
-		MyEquip2Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
-		MyEquip2Zhanji->setScale(0.5f);
-		MyEquip2Zhanji->setVisible(false);
-		addChild(MyEquip2Zhanji, 14, 810 + MyBuyWeaponNum);
-
-		MyGold -= 2140;
+		addChild(MyEquip2, 14, 40+BuyWeaponNum);
+		Gold -= 2140;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1486,24 +1437,16 @@ void MapScene::Buyit2(Ref *sender, Widget::TouchEventType controlevent)
 //武器三确认购买
 void MapScene::Buyit3(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
 	{
-		MyBuyWeaponNum++;
-		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
+		BuyWeaponNum++;
 		Sprite *MyEquip3 = Sprite::create("weapon3.png");
-		MyEquip3->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
+		MyEquip3->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
 		MyEquip3->setScale(0.7f);
-		addChild(MyEquip3, 14, 40 + MyBuyWeaponNum);
-
-		Sprite *MyEquip3Zhanji = Sprite::create("weapon3.png");
-		MyEquip3Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
-		MyEquip3Zhanji->setScale(0.5f);
-		MyEquip3Zhanji->setVisible(false);
-		addChild(MyEquip3Zhanji, 14, 810 + MyBuyWeaponNum);
-
-		MyGold -= 2300;
+		addChild(MyEquip3, 14, 40 + BuyWeaponNum);
+		Gold -= 2300;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1532,24 +1475,16 @@ void MapScene::Buyit3(Ref *sender, Widget::TouchEventType controlevent)
 //武器四确认购买
 void MapScene::Buyit4(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
 	{
-		MyBuyWeaponNum++;
-		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
+		BuyWeaponNum++;
 		Sprite *MyEquip4 = Sprite::create("weapon4.png");
-		MyEquip4->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
+		MyEquip4->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
 		MyEquip4->setScale(0.7f);
-		addChild(MyEquip4, 14, 40 + MyBuyWeaponNum);
-
-		Sprite *MyEquip4Zhanji = Sprite::create("weapon4.png");
-		MyEquip4Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
-		MyEquip4Zhanji->setScale(0.5f);
-		MyEquip4Zhanji->setVisible(false);
-		addChild(MyEquip4Zhanji, 14, 810 + MyBuyWeaponNum);
-
-		MyGold -= 2990;
+		addChild(MyEquip4, 14, 40 + BuyWeaponNum);
+		Gold -= 2990;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1578,31 +1513,22 @@ void MapScene::Buyit4(Ref *sender, Widget::TouchEventType controlevent)
 //武器五确认购买
 void MapScene::Buyit5(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
 	{
-		MyBuyWeaponNum++;
-		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
+		BuyWeaponNum++;
+		CCString *BuyCCstring5 = CCString::createWithFormat("%d", BuyWeaponNum);
+		std::string buystring5 = BuyCCstring5->getCString();
 		Sprite *MyEquip5 = Sprite::create("weapon5.png");
-		MyEquip5->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
+		MyEquip5->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
 		MyEquip5->setScale(0.7f);
-		addChild(MyEquip5, 14, 40 + MyBuyWeaponNum);
-
-		Sprite *MyEquip5Zhanji = Sprite::create("weapon5.png");
-		MyEquip5Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
-		MyEquip5Zhanji->setScale(0.5f);
-		MyEquip5Zhanji->setVisible(false);
-		addChild(MyEquip5Zhanji, 14, 810 + MyBuyWeaponNum);
-
-		MyGold -= 900;
+		addChild(MyEquip5, 14, 40 + BuyWeaponNum);
+		Gold -= 900;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
 		addChild(GoldNum, 9, 55);
-
-
-
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1627,29 +1553,22 @@ void MapScene::Buyit5(Ref *sender, Widget::TouchEventType controlevent)
 //武器六确认购买
 void MapScene::Buyit6(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
+	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
 	{
-		MyBuyWeaponNum++;
-		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
+		BuyWeaponNum++;
+		CCString *BuyCCstring6 = CCString::createWithFormat("%d", BuyWeaponNum);
+		std::string buystring6 = BuyCCstring6->getCString();
 		Sprite *MyEquip6 = Sprite::create("weapon6.png");
-		MyEquip6->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
+		MyEquip6->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
 		MyEquip6->setScale(0.7f);
-		addChild(MyEquip6, 14, 40 + MyBuyWeaponNum);
-
-		Sprite *MyEquip6Zhanji = Sprite::create("weapon6.png");
-		MyEquip6Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
-		MyEquip6Zhanji->setScale(0.5f);
-		MyEquip6Zhanji->setVisible(false);
-		addChild(MyEquip6Zhanji, 14, 810 + MyBuyWeaponNum);
-
-		MyGold -= 710;
+		addChild(MyEquip6, 14, 40 + BuyWeaponNum);
+		Gold -= 710;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
 		addChild(GoldNum, 9, 55);
-
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1676,9 +1595,7 @@ void MapScene::ShopBack(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
-		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
-		for (int p = 1; p <= MyBuyWeaponNum; ++p)
-
+		for (int p = 1; p <= BuyWeaponNum; ++p)
 		{
 			Sprite *Tmp = (Sprite *)this->getChildByTag(40 + p);
 			Tmp->setVisible(false);
@@ -1724,12 +1641,8 @@ void MapScene::ShopBack(Ref *sender, Widget::TouchEventType controlevent)
 		removeChildByTag(1061);
 		removeChildByTag(1062);
 		removeChildByTag(1063);
-		//恢复商城可触发
-		Button *tmp1 = (Button *)this->getChildByTag(50);
-		tmp1->setTouchEnabled(true);
-		//恢复战绩可触发
-		Button *tmp2 = (Button *)this->getChildByTag(51);
-		tmp2->setTouchEnabled(true);
+		Button *tmp = (Button *)this->getChildByTag(50);
+		tmp->setTouchEnabled(true);
 	}
 }
 //使用removebytag至关重要，byTag还可以提供访问

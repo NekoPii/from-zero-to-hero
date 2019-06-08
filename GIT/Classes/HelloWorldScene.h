@@ -13,6 +13,7 @@ public:
     virtual bool init();
 	virtual void update(float dt);
 	void EnterHeroChooseScene(Ref *pSenderEnter);
+
     void CloseGame(cocos2d::Ref* pSenderClose);
 
     
