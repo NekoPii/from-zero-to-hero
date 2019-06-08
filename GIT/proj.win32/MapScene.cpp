@@ -8,10 +8,12 @@
 #include "ui/CocosGUI.h"
 #include "deprecated/CCString.h"
 #include "object.h"
+#include "SimpleAudioEngine.h"
 
 
 USING_NS_CC;
 USING_NS_CC_EXT;
+using namespace CocosDenshion;
 
 int MeKill = 0;
 int MeDead = 0;
@@ -126,7 +128,6 @@ bool MapScene::init()
 	Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 	GoldNum->setPosition(Vec2(50,450));
 	addChild(GoldNum, 9,55);
-
 
 	hero = new heroPrint();
 	hero->initHeroSprite(8, Vec2(860, 540));
@@ -1387,6 +1388,7 @@ void MapScene::Buyit1(Ref *sender, Widget::TouchEventType controlevent)
 	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum<=5)
 	{
 		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
 		Sprite *MyEquip1 = Sprite::create("weapon1.png");
 		MyEquip1->setPosition(Vec2(350+MyBuyWeaponNum*150,200));
 		MyEquip1->setScale(0.7f);
@@ -1401,7 +1403,6 @@ void MapScene::Buyit1(Ref *sender, Widget::TouchEventType controlevent)
 		MyGold -= 1740;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
-
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1433,6 +1434,7 @@ void MapScene::Buyit2(Ref *sender, Widget::TouchEventType controlevent)
 	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
 	{
 		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
 		Sprite *MyEquip2 = Sprite::create("weapon2.png");
 		MyEquip2->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip2->setScale(0.7f);
@@ -1478,6 +1480,7 @@ void MapScene::Buyit3(Ref *sender, Widget::TouchEventType controlevent)
 	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
 	{
 		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
 		Sprite *MyEquip3 = Sprite::create("weapon3.png");
 		MyEquip3->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip3->setScale(0.7f);
@@ -1523,6 +1526,7 @@ void MapScene::Buyit4(Ref *sender, Widget::TouchEventType controlevent)
 	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
 	{
 		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
 		Sprite *MyEquip4 = Sprite::create("weapon4.png");
 		MyEquip4->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip4->setScale(0.7f);
@@ -1568,6 +1572,7 @@ void MapScene::Buyit5(Ref *sender, Widget::TouchEventType controlevent)
 	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
 	{
 		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
 		Sprite *MyEquip5 = Sprite::create("weapon5.png");
 		MyEquip5->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip5->setScale(0.7f);
@@ -1586,6 +1591,9 @@ void MapScene::Buyit5(Ref *sender, Widget::TouchEventType controlevent)
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
 		addChild(GoldNum, 9, 55);
+
+
+
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1613,6 +1621,7 @@ void MapScene::Buyit6(Ref *sender, Widget::TouchEventType controlevent)
 	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
 	{
 		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
 		Sprite *MyEquip6 = Sprite::create("weapon6.png");
 		MyEquip6->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip6->setScale(0.7f);
@@ -1631,6 +1640,7 @@ void MapScene::Buyit6(Ref *sender, Widget::TouchEventType controlevent)
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
 		addChild(GoldNum, 9, 55);
+
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);

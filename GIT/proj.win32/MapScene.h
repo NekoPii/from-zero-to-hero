@@ -28,7 +28,6 @@ public:
 	//void updatePosition(float dt);
 
 	void heroIn(float dt);
-	Vec2 tiledpos(Vec2 pos);
 
 	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
 	virtual void onKeyPressed(EventKeyboard::KeyCode keycode, Event* event);

@@ -1,6 +1,7 @@
 #include "HelloWorldScene.h"
 #include "proj.win32/HeroChoose.h"
 #include "GLOBAL.h"
+#include "SimpleAudioEngine.h"
 
 
 int MyHeroID = 0;
@@ -17,6 +18,7 @@ int Gold = 10000;
 int BuyWeaponNum = 0;
 
 USING_NS_CC;
+using namespace CocosDenshion;
 
 
 Scene* HelloWorld::createScene()
@@ -73,17 +75,11 @@ bool HelloWorld::init()
     return true;
 }
 
-void HelloWorld::update(float dt)
-{
-	float Cur = Loading->getPercentage();
-	Cur += 0.1f;
-	Loading->setPercentage(Cur);
-
 
 void HelloWorld::update(float dt)
 {
 	float Cur = Loading->getPercentage();
-	Cur += 5.0f;
+	Cur += 2.0f;
 	Loading->setPercentage(Cur);
 	if (Cur <= 100)
 	{
@@ -109,7 +105,6 @@ void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 	removeChildByTag(22);
 	removeChildByTag(23);
 
-
 	Director::getInstance()->getTextureCache()->addImageAsync("weapon1.png",NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("weapon2.png", NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("weapon3.png", NULL);
@@ -117,12 +112,12 @@ void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 	Director::getInstance()->getTextureCache()->addImageAsync("weapon5.png", NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("weapon6.png", NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detail.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detai2.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detai3.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detai4.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detai5.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("weapon1detai6.png", NULL);
-	Director::getInstance()->getTextureCache()->addImageAsync("ChooseBackGround.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon2detail.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon3detail.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon4detail.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon5detail.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("weapon6detail.png", NULL);
+	Director::getInstance()->getTextureCache()->addImageAsync("ChooseBackGround.jpg", NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("Exitbutton.jpg", NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("Startbutton.jpg", NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("Shopbackground.png", NULL);
@@ -136,6 +131,7 @@ void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 	Director::getInstance()->getTextureCache()->addImageAsync("Hero1_Avatar.png", NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("Hero2_Avatar.png", NULL);
 	Director::getInstance()->getTextureCache()->addImageAsync("Hero3_Avatar.png", NULL);
+	SimpleAudioEngine::getInstance()->preloadEffect("GOLD.wav");
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();

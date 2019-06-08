@@ -3,6 +3,7 @@
 #include "proj.win32/HeroMakeSure2.h"
 #include "proj.win32/HeroMakeSure3.h"
 #include "HelloWorldScene.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
@@ -70,6 +71,7 @@ bool HeroChoose::init()
 	Hero_3Avatar->setPosition(Vec2(2300,1100));
 	Hero_3Avatar->setScale(2.0f);
 	addChild(Hero_3Avatar, 1);
+
 
 	return true;
 
