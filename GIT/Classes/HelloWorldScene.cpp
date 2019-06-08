@@ -12,11 +12,6 @@ int MyBuyWeaponNum = 0;
 int YouBuyWeaponNum = 0;
 
 
-
-int HeroID = 0;
-int Gold = 10000;
-int BuyWeaponNum = 0;
-
 USING_NS_CC;
 using namespace CocosDenshion;
 
@@ -43,6 +38,9 @@ bool HelloWorld::init()
 	auto *chnString = Dictionary::createWithContentsOfFile("CHN_String.xml");
 	const char *StartGameStr = ((String *)chnString->objectForKey("StartGame_Text"))->getCString();
 	const char *EndGameStr = ((String *)chnString->objectForKey("EndGame_Text"))->getCString();
+
+	SimpleAudioEngine::getInstance()->preloadEffect("Touch.wav");
+	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("BGM.wav");
 
 	//StartButton
     auto labelStart = Label::create(StartGameStr, "Arial", 33);
@@ -99,7 +97,8 @@ void HelloWorld::update(float dt)
 //跳转到HeroChoose
 void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 {
-
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
+	SimpleAudioEngine::getInstance()->playBackgroundMusic("BGM.wav",true);
 	removeChildByTag(20);
 	removeChildByTag(21);
 	removeChildByTag(22);
@@ -154,5 +153,6 @@ void HelloWorld::EnterHeroChooseScene(Ref *pSenderEnter)
 //关闭游戏
 void HelloWorld::CloseGame(cocos2d::Ref* pSenderClose)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->end();
 }

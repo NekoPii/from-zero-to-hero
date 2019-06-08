@@ -6,6 +6,7 @@
 #include "SimpleAudioEngine.h"
 
 USING_NS_CC;
+using namespace CocosDenshion;
 
 Scene *HeroChoose::createScene()
 {
@@ -30,8 +31,6 @@ bool HeroChoose::init()
 	ChooseBackGround->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
 	ChooseBackGround->setScale(3.0f);
 	addChild(ChooseBackGround, 0);
-
-	//
 
 	auto *chnString = Dictionary::createWithContentsOfFile("CHN_String.xml");
 	const char *ChooseStr = ((String *)chnString->objectForKey("Choose_Text"))->getCString();
@@ -80,21 +79,25 @@ bool HeroChoose::init()
 //跳转到开始界面
 void HeroChoose::EnterHelloWorldScene(Ref *pSenderBack)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HelloWorld::createScene()));
 }
 
 
 void HeroChoose::OnRoleSelect1(Ref *pSenderEnter)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroMakeSure1::createScene()));
 }
 
 void HeroChoose::OnRoleSelect2(Ref *pSenderEnter)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroMakeSure2::createScene()));
 }
 
 void HeroChoose::OnRoleSelect3(Ref *pSenderEnter)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroMakeSure3::createScene()));
 }

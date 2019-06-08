@@ -635,7 +635,7 @@ Vec2 MapScene::tiledpos(Vec2 pos)
 void MapScene::EnterHelloWorldScene(Ref *pSenderBack)
 {
 	//全局重新初始化
-
+	SimpleAudioEngine::getInstance()->stopBackgroundMusic(true);
 	MyHeroID = 0;
 	MyGold = 10000;
 	MyBuyWeaponNum = 0;
@@ -648,6 +648,7 @@ void MapScene::ShopCall(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		//战绩图标不可触发
 		Button *tmp1 = (Button *)this->getChildByTag(51);
 		tmp1->setTouchEnabled(false);
@@ -815,6 +816,7 @@ void MapScene::ZhanjiCall(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		//战绩图标不可触发
 		Button *tmp1 = (Button *)this->getChildByTag(51);
 		tmp1->setTouchEnabled(false);
@@ -1044,6 +1046,7 @@ void MapScene::ZhanjiBack(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		for (int i = 0; i <= 17; ++i)
 		{
 			removeChildByTag(80 + i);
@@ -1072,6 +1075,7 @@ void MapScene::Shopbuy1(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1125,6 +1129,7 @@ void MapScene::Shopbuy2(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1177,6 +1182,7 @@ void MapScene::Shopbuy3(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1229,6 +1235,7 @@ void MapScene::Shopbuy4(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1281,6 +1288,7 @@ void MapScene::Shopbuy5(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1333,6 +1341,7 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1667,6 +1676,7 @@ void MapScene::ShopBack(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		for (int p = 1; p <= MyBuyWeaponNum; ++p)
 
 		{

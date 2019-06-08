@@ -4,10 +4,12 @@
 #include "GLOBAL.h"
 #include "cocos-ext.h"
 #include "ui/CocosGUI.h"
+#include "SimpleAudioEngine.h"
 
 
 USING_NS_CC;
 USING_NS_CC_EXT;
+using namespace CocosDenshion;
 
 
 Scene *HeroMakeSure2::createScene()
@@ -71,6 +73,7 @@ bool HeroMakeSure2::init()
 
 void HeroMakeSure2::EnterMapScene(Ref *pSenderEnter)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	MyHeroID = 2;
 	YourHeroID = 2;
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,MapScene::createScene()));
@@ -78,6 +81,7 @@ void HeroMakeSure2::EnterMapScene(Ref *pSenderEnter)
 
 void HeroMakeSure2::ReturnHeroChoose(Ref *pSenderReturn)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroChoose::createScene()));
 }
 
