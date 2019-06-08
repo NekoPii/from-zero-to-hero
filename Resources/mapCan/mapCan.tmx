@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="74" height="48" tilewidth="32" tileheight="32" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" name="map" tilewidth="32" tileheight="32" tilecount="240" columns="16">
+  <image source="E:/迅雷下载/TileA4.png" width="512" height="480"/>
+ </tileset>
+ <tileset firstgid="241" name="map" tilewidth="32" tileheight="32" tilecount="240" columns="16">
+  <image source="map.png" width="512" height="480"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer id="1" name="块层 1" width="74" height="48">
+  <data encoding="base64" compression="zlib">
+   eJzt2lGSwiAMBmAqnqB6gdqL7P1PteuMmclmEkgAG1p4+GfUWhc+AwW7SwhhmTFn7aANvWedTtNpOk2nhtlIHkwi876RnTgjnNsnozq9+35PJH5y/5LTjcTbhMsjY8QFnGifWjhJ34F3LVmNNE5bYeKBeRnT0gmsevaB5GpoJ4F5RxtwkOYSjZOHCw6+NnHtp0Z7gVGNk7cP50StpHPwNU1jBA6WceftknN6B+Yh6Rx6TbaGuzb07sRZ5ZygLri+r8Ixi5O3h2SErehjyUkKHmvatQYdd94mOSeuvqTzVkWsTt4WpX4pJ43Z1Z2kPa3Vy+Lk3efaWrI4UasRnDgzbUr2tt59rnEqMRrJqaaWsNXVxx2tq9KMUk+1mU7TqVV2g9HZ56fp5OuEf0PG61LvNvfsBM9HdYpBXm9KTvg177Yf7aSpJ/B8Mce9+3BEcuMOz+O0vuh70Of+QJ5/z58d9PMIJzzmpHqj4/C9T9jD//tkZ0xuHUDvm67MayknfPzMXi2d4N5DDPy9RPjMs1lp1pUlTpwRZ1W7d+/Bp9QpZYStYqj7Lagno2869bqvtvqk9i6Sk8ZIsvL2qvHhvCQnPD9rsjVuW09pWU+jO8Hc3KvTUX835QR7PM3cdOV60jgtCqNRnBajFfd/bdvFrH4BLjhVCg==
+  </data>
+ </layer>
+</map>

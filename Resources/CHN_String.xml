@@ -1,0 +1,14 @@
+<dict>
+          <key>StartGame_Text</key>
+          <string>开始游戏</string>
+          <key>EndGame_Text</key>
+          <string>结束游戏</string>
+          <key>Continue_Text</key>
+          <string>继续</string>
+          <key>Back_Text</key>
+          <string>返回</string>
+          <key>MakeSure_Text</key>
+          <string>确定</string>
+          <key>Choose_Text</key>
+          <string>请选择你的英雄</string>
+</dict>
