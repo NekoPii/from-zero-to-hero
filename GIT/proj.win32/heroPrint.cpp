@@ -1,24 +1,26 @@
 #include "heroPrint.h"
-
-void heroPrint::initHeroSprite( int direction, cocos2d::Point currentPosition)
+#include "object.h"
+#include "GLOBAL.h"
+void heroPrint::initHeroSprite(int direction, cocos2d::Point currentPosition)
 {
 	this->currentPosition = currentPosition;
 	heroSprite = Sprite::create("hero_1_stand11.png");
-	heroSprite->setScale(2.0f);
+	heroSprite->setScale(1.0f);
 	heroSprite->setPosition(currentPosition);
+	blood = 20;
 	addChild(heroSprite);
-	heroSprite->runAction(this->createAnimate(direction, "stand", 7));
+	heroSprite->runAction(this->createAnimate(direction, "stand", 7,HeroID));
 }
 
 
-Animate* heroPrint::createAnimate( int direction, const char *action, int num)
+Animate* heroPrint::createAnimate(int direction, const char* action, int num,int id)
 {
 	auto* frameCache = SpriteFrameCache::getInstance();
-	frameCache->addSpriteFramesWithFile("hero_1.plist", "hero_1.png");
+	frameCache->addSpriteFramesWithFile("heroh.plist", "heroh.png");
 	Vector <SpriteFrame*> frameArray;
 	for (int i = 1; i <= num; i++)
 	{
-		auto* frame = frameCache->getSpriteFrameByName(String::createWithFormat("hero_1_%s%d%d.png", action, direction, i)->getCString());
+		auto* frame = frameCache->getSpriteFrameByName(String::createWithFormat("hero_%d_%s%d%d.png",id, action, direction, i)->getCString());
 		frameArray.pushBack(frame);
 	}
 	Animation* animation = Animation::createWithSpriteFrames(frameArray);
@@ -30,18 +32,18 @@ int heroPrint::getDirection(cocos2d::Point start, cocos2d::Point final)
 {
 	float x = final.x - start.x;
 	float y = final.y - start.y;
-	float r = sqrt(x*x + y * y);
-	if (x > 0 && x*x/ (y * y) >10)
+	float r = sqrt(x * x + y * y);
+	if (x > 0 && x * x / (y * y) > 10)
 	{
 		CCLOG("RIGHT");
 		this->direction = 8;
 	}
-	else if (x < 0 && x*x /( y * y)>10)
+	else if (x < 0 && x * x / (y * y)>10)
 	{
 		CCLOG("LEFT");
 		this->direction = 6;
 	}
-	else if (y > 0 &&  y * y/(x*x)  >10)
+	else if (y > 0 && y * y / (x * x) > 10)
 	{
 		CCLOG("UP");
 		this->direction = 7;
@@ -77,7 +79,7 @@ float heroPrint::getDistance(cocos2d::Point pos1, cocos2d::Point pos2)
 {
 	float x = pos1.x - pos2.x;
 	float y = pos1.y - pos2.y;
-	return sqrt(x*x + y * y);
+	return sqrt(x * x + y * y);
 }
 
 void heroPrint::heroMoveTo(cocos2d::Point position)
@@ -85,16 +87,41 @@ void heroPrint::heroMoveTo(cocos2d::Point position)
 	heroSprite->stopAllActions();
 	this->currentPosition = heroSprite->getPosition();
 	float distance = getDistance(this->currentPosition, position);
-	auto* animate = createAnimate(getDirection(this->currentPosition, position), "run", 7);
+	auto* animate = createAnimate(getDirection(this->currentPosition, position), "run", 7,HeroID);
 	auto* move = MoveTo::create((float)distance / 200, position);
 	auto* callFunc = CallFunc::create(CC_CALLBACK_0(heroPrint::heroResume, this));
 	auto* sequence = Sequence::create(move, callFunc, NULL);
 	heroSprite->runAction(animate);
 	heroSprite->runAction(sequence);
 }
+Point heroPrint::herosPosition()
+{
+	Vec2 hero_position = heroSprite->getPosition();
+	return hero_position;
+}
+void heroPrint::heroAttack(Point pos, Point Epos)
+{
+	heroSprite->stopAllActions();
+	if (used == 1) return;
+	float distance = getDistance(pos, Epos);
+	auto delayTime = DelayTime::create(1.0f);
+	auto hit = Sprite::create("AA.jpg");
+	hit->setPosition(pos);
+	addChild(hit);
+	used = 1;
+	auto * move = MoveTo::create((float)distance / 500, Epos);
+	auto * remove = MoveTo::create(0, Vec2(-2000, -2000));
+	auto funcall2 = CallFunc::create(CC_CALLBACK_0(heroPrint::finishRunAction, this));
+	auto * sequence = Sequence::create(move, remove, delayTime, funcall2, NULL);
+	hit->runAction(sequence);
+}
+void heroPrint::finishRunAction()
+{
+	used = false;
+}
+
 void heroPrint::heroResume()
 {
 	heroSprite->stopAllActions();
-	heroSprite->runAction(createAnimate(this->direction, "stand", 7));
+	heroSprite->runAction(createAnimate(this->direction, "stand", 7,HeroID));
 }
-

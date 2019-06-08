@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -14,7 +14,6 @@
     <ProjectGuid>{76A39BB2-9B84-4C65-98A5-654D86B86F2A}</ProjectGuid>
     <RootNamespace>test_win32</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -153,27 +152,14 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
-    <ClCompile Include="HeroChoose.cpp" />
-    <ClCompile Include="HeroMakeSure1.cpp" />
-    <ClCompile Include="HeroMakeSure2.cpp" />
-    <ClCompile Include="HeroMakeSure3.cpp" />
-    <ClCompile Include="heroPrint.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapScene.cpp" />
-    <ClCompile Include="object.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
-    <ClInclude Include="..\Classes\GLOBAL.h" />
     <ClInclude Include="..\Classes\HelloWorldScene.h" />
-    <ClInclude Include="HeroChoose.h" />
-    <ClInclude Include="HeroMakeSure1.h" />
-    <ClInclude Include="HeroMakeSure2.h" />
-    <ClInclude Include="HeroMakeSure3.h" />
-    <ClInclude Include="heroPrint.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="MapScene.h" />
-    <ClInclude Include="object.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cocos2d\cocos\2d\libcocos2d.vcxproj">

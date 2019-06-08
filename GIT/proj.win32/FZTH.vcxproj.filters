@@ -4,10 +4,10 @@
     <Filter Include="win32">
       <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
     </Filter>
-    <Filter Include="resource">
+    <Filter Include="win32\resource">
       <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
     </Filter>
-    <Filter Include="resource\src">
+    <Filter Include="win32\resource\src">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -16,38 +16,65 @@
       <Filter>win32</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
-      <Filter>resource\src</Filter>
+      <Filter>win32\resource\src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\HelloWorldScene.cpp">
-      <Filter>resource\src</Filter>
+      <Filter>win32\resource\src</Filter>
     </ClCompile>
     <ClCompile Include="MapScene.cpp">
-      <Filter>resource\src</Filter>
+      <Filter>win32\resource\src</Filter>
     </ClCompile>
     <ClCompile Include="heroPrint.cpp">
-      <Filter>resource\src</Filter>
+      <Filter>win32\resource\src</Filter>
     </ClCompile>
+    <ClCompile Include="HeroChoose.cpp">
+      <Filter>win32\resource\src</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroMakeSure1.cpp">
+      <Filter>win32\resource\src</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroMakeSure2.cpp">
+      <Filter>win32\resource\src</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroMakeSure3.cpp">
+      <Filter>win32\resource\src</Filter>
+    </ClCompile>
+    <ClCompile Include="object.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\AppDelegate.h">
-      <Filter>resource\src</Filter>
+      <Filter>win32\resource\src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\HelloWorldScene.h">
-      <Filter>resource\src</Filter>
+      <Filter>win32\resource\src</Filter>
     </ClInclude>
     <ClInclude Include="MapScene.h">
-      <Filter>resource\src</Filter>
+      <Filter>win32\resource\src</Filter>
     </ClInclude>
     <ClInclude Include="heroPrint.h">
-      <Filter>resource\src</Filter>
+      <Filter>win32\resource\src</Filter>
     </ClInclude>
+    <ClInclude Include="HeroChoose.h">
+      <Filter>win32\resource\src</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroMakeSure1.h">
+      <Filter>win32\resource\src</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroMakeSure2.h">
+      <Filter>win32\resource\src</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroMakeSure3.h">
+      <Filter>win32\resource\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GLOBAL.h" />
+    <ClInclude Include="object.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
-      <Filter>resource</Filter>
+      <Filter>win32\resource</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>

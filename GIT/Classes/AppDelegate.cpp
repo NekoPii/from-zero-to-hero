@@ -1,4 +1,5 @@
 #include "AppDelegate.h"
+//#include "proj.win32/InitLoading.h"
 #include "HelloWorldScene.h"
 
 // #define USE_AUDIO_ENGINE 1
@@ -17,6 +18,7 @@ using namespace CocosDenshion;
 #endif
 
 USING_NS_CC;
+
 
 static cocos2d::Size designResolutionSize = cocos2d::Size(1920,1080);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
