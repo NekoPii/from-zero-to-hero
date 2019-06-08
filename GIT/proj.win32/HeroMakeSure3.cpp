@@ -4,12 +4,10 @@
 #include "GLOBAL.h"
 #include "cocos-ext.h"
 #include "ui/CocosGUI.h"
-#include "SimpleAudioEngine.h"
 
 
 USING_NS_CC;
 USING_NS_CC_EXT;
-using namespace CocosDenshion;
 
 
 Scene *HeroMakeSure3::createScene()
@@ -29,11 +27,6 @@ bool HeroMakeSure3::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-
-	auto *chnString = Dictionary::createWithContentsOfFile("CHN_String.xml");
-	const char *ContinueGameStr = ((String *)chnString->objectForKey("Continue_Text"))->getCString();
-	const char *BackGameStr = ((String *)chnString->objectForKey("Back_Text"))->getCString();
-
 	//切换界面背景
 	auto MakeSure3BackGround = Sprite::create("ChooseBackGround.jpg");
 	MakeSure3BackGround->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
@@ -51,7 +44,7 @@ bool HeroMakeSure3::init()
 	createAnimateStand3(7);
 
 	//继续
-	auto labelContinue3 = Label::create(ContinueGameStr, "Arial", 32);
+	auto labelContinue3 = Label::createWithTTF("Continue", "fonts/Marker Felt.ttf", 32);
 	auto pContinueButtonItem3 = MenuItemImage::create("Startbutton.jpg", "Startbutton.jpg", CC_CALLBACK_1(HeroMakeSure3::EnterMapScene, this));
 	auto ContinueButton3 = Menu::create(pContinueButtonItem3, NULL);
 	ContinueButton3->setPosition(Vec2(origin.x + 2.0 *visibleSize.width / 3.0, origin.y + visibleSize.height / 5.0 - labelContinue3->getContentSize().height));
@@ -60,7 +53,7 @@ bool HeroMakeSure3::init()
 	addChild(ContinueButton3, 1);
 
 	//重选
-	auto labelReturn3 = Label::create(BackGameStr, "Arial", 32);
+	auto labelReturn3 = Label::createWithTTF("ReSelect", "fonts/Marker Felt.ttf", 32);
 	auto pReturnButtonItem3 = MenuItemImage::create("Exitbutton.jpg", "Exitbutton.jpg", CC_CALLBACK_1(HeroMakeSure3::ReturnHeroChoose, this));
 	auto ReturnButton3 = Menu::create(pReturnButtonItem3, NULL);
 	ReturnButton3->setPosition(Vec2(origin.x + visibleSize.width / 3.0, origin.y + visibleSize.height / 5.0 - labelReturn3->getContentSize().height));
@@ -73,15 +66,12 @@ bool HeroMakeSure3::init()
 
 void HeroMakeSure3::EnterMapScene(Ref *pSenderEnter)
 {
-	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
-	MyHeroID = 3;
-	YourHeroID = 3;
+	HeroID = 3;
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,MapScene::createScene()));
 }
 
 void HeroMakeSure3::ReturnHeroChoose(Ref *pSenderReturn)
 {
-	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroChoose::createScene()));
 }
 

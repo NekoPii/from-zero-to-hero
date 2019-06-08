@@ -25,6 +25,8 @@ public:
 	void finishRunAction(const int num);
 	vector<int>use;
 	bool used1 = 0;
+	Sprite* progressSprite;
+	ProgressTimer *Loading;
 	CREATE_FUNC(object);
 };
 #endif

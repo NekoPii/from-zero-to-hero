@@ -5,6 +5,8 @@
 #include "heroPrint.h"
 #include "cocos-ext.h"
 #include "ui/CocosGUI.h"
+#include <vector>
+using namespace std;
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -24,29 +26,32 @@ public:
 	CCRect getRect(Node* pNode);
 	virtual bool init();
 	heroPrint* hero;
+	void attactEnemy(Vec2 pos, Vec2 Epos, int num,int tag1,int tag2);
+	void finishRunAction(const int num);
+	void finishAttack(const int tag1, const int tag2);
 	//void update(float dt);
 	//void updatePosition(float dt);
-
+	Sprite* LBS;
+	void mark(float dt);
 	void heroIn(float dt);
-
-	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
-	virtual void onKeyPressed(EventKeyboard::KeyCode keycode, Event* event);
-	void EnterHelloWorldScene(Ref* pSenderBack);
-	void ShopCall(Ref *sender, Widget::TouchEventType controlevent);
-	void ShopBack(Ref *sender, Widget::TouchEventType controlevent);
-	void ZhanjiCall(Ref *sender, Widget::TouchEventType controlevent);
-	void ZhanjiBack(Ref *sender, Widget::TouchEventType controlevent);
 	void Tower1(float dt);
 	void soldersMake(float dt);
 	void soldersContrl(float dt);
 	void Tower2(float dt);
+	void soldersMake1(float dt);
+	void soldersMake2(float dt);
 	float getDistance(Vec2 me, Vec2 you);
 	Sprite* chosenEnemy;
 	Sprite* chosenFriend;
 	Vector<Sprite*> Friend;
 	Vector<Sprite*> Enemy;
 	Vec2 tiledpos(Vec2 pos);
-
+	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
+	virtual void onKeyPressed(EventKeyboard::KeyCode keycode, Event* event);
+	void EnterHelloWorldScene(Ref* pSenderBack);
+	vector<int>use;
+	void Shopcall(Ref *sender, Widget::TouchEventType controlevent);
+	void ShopBack(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy1(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy2(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy3(Ref *sender, Widget::TouchEventType controlevent);
@@ -61,6 +66,15 @@ public:
 	void Buyit6(Ref *sender, Widget::TouchEventType controlevent);
 
 	// implement the "static create()" method manually
+	cocos2d::Animate* createAnimateH(int direction, const char* action, int num, int id);
+	cocos2d::Animate* createAnimateS(int direction, const char* action, int num, int id,int loop);
+
+	SpriteFrameCache* frameCacheH;
+	SpriteFrameCache* frameCacheS;
+
+
+	
+//	void dieAni(object *die);
 	CREATE_FUNC(MapScene);
 
 private:

@@ -25,7 +25,7 @@ bool object::init()
 		int n = 0;
 		use.push_back(n);
 	}
-	use[40] = 1;
+	
 	return true;
 }
 void object::objectInit()
@@ -34,35 +34,52 @@ void object::objectInit()
 	enemy = Sprite::create("gold.png");
 	enemy->setPosition(Vec2(-100, -100));
 	addChild(enemy);
+	progressSprite = Sprite::create("Progress.png");
+	Loading = ProgressTimer::create(progressSprite);
+	addChild(Loading);
+	Loading->setType(kCCProgressTimerTypeBar);
+	Loading->setScale(0.1f);
+	Loading->setMidpoint(Vec2(0, 0));
+	Loading->setBarChangeRate(Vec2(1.0, 0));
+	Loading->setPercentage(100);
+	
+	
+	
 }
 void object::start(int type, Vec2 position)
 {
 	this->type = type;
 	if (type == 1)
 	{
-		auto frame = SpriteFrame::create("solders1.png", Rect(0, 0, 149, 186));
-		enemy->setDisplayFrame(frame);
+		
+		enemy = Sprite::create("protect.png");
+		addChild(enemy);
+		enemy->setScale(0.3);
 		//enemy->setScale(0.5f);
-		blood = 25;
+		blood = 50;
 	}
 	if (type == 2)
 	{
-		auto frame = SpriteFrame::create("protect1.png", Rect(0, 0, 149, 186));
-		enemy->setDisplayFrame(frame);
-		blood = 25;
+		enemy = Sprite::create("protect.png");
+		addChild(enemy);
+		enemy->setScale(0.3);
+		blood = 50;
 	}
 	if (type == 3)
 	{
-		auto frame = SpriteFrame::create("solders2.png", Rect(0, 0, 39, 46));
-		enemy->setDisplayFrame(frame);
+	//	auto frame = SpriteFrame::create("solders2.png", Rect(0, 0, 39, 46));
+	//	enemy->setDisplayFrame(frame);
+		blood = 10;
 	}
 	if (type == 4)
 	{
-		auto frame = SpriteFrame::create("solders3.png", Rect(0, 0, 39, 46));
-		enemy->setDisplayFrame(frame);
+	//	auto frame = SpriteFrame::create("solders3.png", Rect(0, 0, 39, 46));
+	//	enemy->setDisplayFrame(frame);
+		blood = 10;
 	}
 
 	enemy->setPosition(position);
+	Loading->setPosition(Vec2(position.x,position.y+50));
 	
 }
 void object::attactEnemy(Vec2 pos ,Vec2 Epos,int num)
@@ -77,7 +94,7 @@ void object::attactEnemy(Vec2 pos ,Vec2 Epos,int num)
 	addChild(hit);
 	use[num] = 1;
 	const int m = num;
-	auto * move = MoveTo::create((float)distance / 1000, Epos);
+	auto * move = MoveTo::create((float)distance / 2000, Epos);
 	auto * remove = MoveTo::create(0, Vec2(-2000, -2000));
 	auto funcall1 = CallFunc::create(CC_CALLBACK_0(object::finishRunAction, this, m));
 	auto funcall2 = CallFunc::create(CC_CALLBACK_0(object::finishRunAction, this,m));
