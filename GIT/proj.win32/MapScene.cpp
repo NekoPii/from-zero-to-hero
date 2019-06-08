@@ -9,11 +9,17 @@
 #include "deprecated/CCString.h"
 #include "object.h"
 #include <vector>
+#include "SimpleAudioEngine.h"
 using namespace std;
 
 USING_NS_CC;
 USING_NS_CC_EXT;
+using namespace CocosDenshion;
 
+int MeKill = 0;
+int MeDead = 0;
+int YouKill = 0;
+int YouDead = 0;
 int current = 0;
 
 
@@ -86,8 +92,44 @@ bool MapScene::init()
 	ShopButton->addTouchEventListener(CC_CALLBACK_2(MapScene::Shopcall, this));
 	addChild(ShopButton, 9,50); 
 
+	//战绩图标
+	Button *ZhanjiButton = Button::create();
+	ZhanjiButton->loadTextures("Zhanji.png", "Zhanji.png", "");
+	ZhanjiButton->setPosition(Vec2(1750, 1030));
+	ZhanjiButton->setScale(1.0f);
+	ZhanjiButton->addTouchEventListener(CC_CALLBACK_2(MapScene::ZhanjiCall, this));
+	addChild(ZhanjiButton, 9, 51);
+
+	//击杀数
+	CCString *TMeKillCCstring = CCString::createWithFormat("%d", MeKill);
+	std::string TMeKillstring = TMeKillCCstring->getCString();
+	Label *TMeKillNum = Label::createWithTTF(TMeKillstring, "fonts/Marker Felt.ttf", 32);
+	TMeKillNum->setPosition(Vec2(1750, 1030));
+	TMeKillNum->setScale(1.0f);
+	addChild(TMeKillNum, 10, 52);
+
+	//击杀图标
+	Sprite *KillTag = Sprite::create("kill.png");
+	KillTag->setPosition(Vec2(1700, 1030));
+	KillTag->setScale(1.0f);
+	addChild(KillTag, 10, 53);
+
+	//死亡数
+	CCString *TMeDeadCCstring = CCString::createWithFormat("%d", MeDead);
+	std::string TMeDeadstring = TMeDeadCCstring->getCString();
+	Label *TMeDeadNum = Label::createWithTTF(TMeDeadstring, "fonts/Marker Felt.ttf", 32);
+	TMeDeadNum->setPosition(Vec2(1860, 1030));
+	TMeDeadNum->setScale(1.0f);
+	addChild(TMeDeadNum, 10, 54);
+
+	//死亡图标
+	Sprite *DeadTag = Sprite::create("die.png");
+	DeadTag->setPosition(Vec2(1810, 1030));
+	DeadTag->setScale(1.0f);
+	addChild(DeadTag, 10, 56);
+
 	//金币数字
-	CCString *goldCCstring=CCString::createWithFormat("%d",Gold);
+	CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
 	std::string goldstring = goldCCstring->getCString();
 	Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 	GoldNum->setPosition(Vec2(50,450));
@@ -214,7 +256,7 @@ bool MapScene::onTouchBegan(Touch* touch, Event* unused_event)
 				//	CCLOG("%d*****+***", current);
 					//hero->heroAttack(hero_position, soldersPostion);
 					hero->heroSprite->stopAllActions();
-					hero->heroSprite->runAction(createAnimateH(4,"att", 7, HeroID));
+					hero->heroSprite->runAction(createAnimateH(4,"att", 7, MyHeroID));
 					if(i!=0)
 					attactEnemy(hero_position, soldersPostion, 49,2046,x);
 					if (i == 0)
@@ -728,7 +770,7 @@ void MapScene::soldersContrl(float dt)
 					a->runAction(createAnimateS(2, "run", 8, 5, -1));
 					float distance = getDistance(soldersPostion, Friend.at(min)->getPosition());
 					auto* Move = MoveTo::create((float)distance / 50, Friend.at(min)->getPosition());
-					auto* MoveBlood = MoveTo::create((float)Distance / 50, Vec2(Friend.at(min)->getPosition().x, Friend.at(min)->getPosition().y + 50));
+					auto* MoveBlood = MoveTo::create((float)distance / 50, Vec2(Friend.at(min)->getPosition().x, Friend.at(min)->getPosition().y + 50));
 					a->runAction(Move);
 					bloodLine->runAction(MoveBlood);
 				}
@@ -876,6 +918,8 @@ void MapScene::finishAttack(const int tag1, const int tag2)
 		//读取属性及计算
 		object* solder2 = (object*)getChildByTag(tag2);
 		solder2->blood--;
+		float cur = (float)solder2->blood * 10;
+		solder2->Loading->setPercentage(cur);
 		if(solder2->blood<=0)
 			solder2->enemy->setPosition(-2000, -2000);
 	}
@@ -883,9 +927,10 @@ void MapScene::finishAttack(const int tag1, const int tag2)
 void MapScene::EnterHelloWorldScene(Ref *pSenderBack)
 {
 	//全局重新初始化
-	HeroID = 0;
-	Gold = 10000;
-	BuyWeaponNum = 0;
+	SimpleAudioEngine::getInstance()->stopBackgroundMusic(true);
+	MyHeroID = 0;
+	MyGold = 10000;
+	MyBuyWeaponNum = 0;
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HelloWorld::createScene()));
 }
 
@@ -894,8 +939,14 @@ void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
-		Button *tmp = (Button *)this->getChildByTag(50);
-		tmp->setTouchEnabled(false);
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
+		//战绩图标不可触发
+		Button *tmp1 = (Button *)this->getChildByTag(51);
+		tmp1->setTouchEnabled(false);
+		//商城图标不可触发
+		Button *tmp2 = (Button *)this->getChildByTag(50);
+		tmp2->setTouchEnabled(false);
+
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -1041,7 +1092,7 @@ void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 		Equipment6->setScale(0.8f);
 		addChild(Equipment6, 12, 76);
 
-		for (int p = 1; p <= BuyWeaponNum; ++p)
+		for (int p = 1; p <=MyBuyWeaponNum; ++p)
 		{
 			Sprite *Tmp = (Sprite *)this->getChildByTag(40+p);
 			Tmp->setVisible(true);
@@ -1050,12 +1101,269 @@ void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 	}
 }
 
+void MapScene::ZhanjiCall(Ref *sender, Widget::TouchEventType controlevent)
+{
+	if (controlevent == Widget::TouchEventType::ENDED)
+	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
+		//战绩图标不可触发
+		Button *tmp1 = (Button *)this->getChildByTag(51);
+		tmp1->setTouchEnabled(false);
+		//商城图标不可触发
+		Button *tmp2 = (Button *)this->getChildByTag(50);
+		tmp2->setTouchEnabled(false);
+
+		auto visibleSize = Director::getInstance()->getVisibleSize();
+		Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+		auto *chnString = Dictionary::createWithContentsOfFile("CHN_String.xml");
+		const char *KillStr = ((String *)chnString->objectForKey("Kill_Text"))->getCString();
+		const char *DeadStr = ((String *)chnString->objectForKey("Dead_Text"))->getCString();
+		const char *ZhanjiStr = ((String *)chnString->objectForKey("Zhanji_Text"))->getCString();
+
+		Button *ZhanjiBackButton = Button::create();
+		ZhanjiBackButton->loadTextures("ShopBack.png", "ShopBack.png", "");
+		ZhanjiBackButton->setPosition(Vec2(1665, 910));
+		ZhanjiBackButton->addTouchEventListener(CC_CALLBACK_2(MapScene::ZhanjiBack, this));
+		ZhanjiBackButton->setScale(0.72f);
+		addChild(ZhanjiBackButton, 14, 80);
+
+		Sprite *ZhanjiBackGround;
+		ZhanjiBackGround = Sprite::create("Shopbackground.png");
+		ZhanjiBackGround->setPosition(Vec2(960, 550));
+		ZhanjiBackGround->setScale(0.85f);
+		ZhanjiBackGround->setOpacity(230);
+		addChild(ZhanjiBackGround, 10, 81);
+
+		Sprite *LittleTag = Sprite::create("little.png");
+		LittleTag->setPosition(Vec2(180, 900));
+		addChild(LittleTag, 14, 82);
+
+
+		Label *Zhanjilabel = Label::create(ZhanjiStr, "Arial", 34);
+		Zhanjilabel->setPosition(Vec2(250, 900));
+		addChild(Zhanjilabel, 14, 97);
+
+		//我方头像
+		Sprite *MeAvatar;
+		std::string MeAvatarName = StringUtils::format("Hero%d_Avatar.png", MyHeroID);
+		MeAvatar = Sprite::create(MeAvatarName);
+		if (MeAvatarName == "Hero1_Avatar.png")
+		{
+			MeAvatar->setScale(0.3f);
+		}
+		else
+		{
+			MeAvatar->setScale(2.0f);
+		}
+		MeAvatar->setPosition(Vec2(origin.x + visibleSize.width*0.25, origin.y + visibleSize.height*0.5));
+		addChild(MeAvatar, 12, 83);
+
+		//对方头像
+		Sprite *YouAvatar;
+		std::string YouAvatarName = StringUtils::format("Hero%d_Avatar.png", YourHeroID);
+		YouAvatar = Sprite::create(YouAvatarName);
+		if (YouAvatarName == "Hero1_Avatar.png")
+		{
+			YouAvatar->setScale(0.3f);
+		}
+		else
+		{
+			YouAvatar->setScale(2.0f);
+		}
+		YouAvatar->setPosition(Vec2(origin.x + visibleSize.width*0.725, origin.y + visibleSize.height*0.5));
+		addChild(YouAvatar, 12, 84);
+
+		//我方空方案
+		Sprite *MyEquipment1 = Sprite::create("kong.png");
+		MyEquipment1->setPosition(Vec2(250, 300));
+		MyEquipment1->setScale(0.6f);
+		addChild(MyEquipment1, 12, 201);
+
+		Sprite *MyEquipment2 = Sprite::create("kong.png");
+		MyEquipment2->setPosition(Vec2(350, 300));
+		MyEquipment2->setScale(0.6f);
+		addChild(MyEquipment2, 12, 202);
+
+		Sprite *MyEquipment3 = Sprite::create("kong.png");
+		MyEquipment3->setPosition(Vec2(450, 300));
+		MyEquipment3->setScale(0.6f);
+		addChild(MyEquipment3, 12, 203);
+
+		Sprite *MyEquipment4 = Sprite::create("kong.png");
+		MyEquipment4->setPosition(Vec2(550, 300));
+		MyEquipment4->setScale(0.6f);
+		addChild(MyEquipment4, 12, 204);
+
+		Sprite *MyEquipment5 = Sprite::create("kong.png");
+		MyEquipment5->setPosition(Vec2(650, 300));
+		MyEquipment5->setScale(0.6f);
+		addChild(MyEquipment5, 12, 205);
+
+		Sprite *MyEquipment6 = Sprite::create("kong.png");
+		MyEquipment6->setPosition(Vec2(750, 300));
+		MyEquipment6->setScale(0.6f);
+		addChild(MyEquipment6, 12, 206);
+
+		//对方空方案
+		Sprite *YouEquipment1 = Sprite::create("kong.png");
+		YouEquipment1->setPosition(Vec2(1150, 300));
+		YouEquipment1->setScale(0.6f);
+		addChild(YouEquipment1, 12, 207);
+
+		Sprite *YouEquipment2 = Sprite::create("kong.png");
+		YouEquipment2->setPosition(Vec2(1250, 300));
+		YouEquipment2->setScale(0.6f);
+		addChild(YouEquipment2, 12, 208);
+
+		Sprite *YouEquipment3 = Sprite::create("kong.png");
+		YouEquipment3->setPosition(Vec2(1350, 300));
+		YouEquipment3->setScale(0.6f);
+		addChild(YouEquipment3, 12, 209);
+
+		Sprite *YouEquipment4 = Sprite::create("kong.png");
+		YouEquipment4->setPosition(Vec2(1450, 300));
+		YouEquipment4->setScale(0.6f);
+		addChild(YouEquipment4, 12, 210);
+
+		Sprite *YouEquipment5 = Sprite::create("kong.png");
+		YouEquipment5->setPosition(Vec2(1550, 300));
+		YouEquipment5->setScale(0.6f);
+		addChild(YouEquipment5, 12, 211);
+
+		Sprite *YouEquipment6 = Sprite::create("kong.png");
+		YouEquipment6->setPosition(Vec2(1650, 300));
+		YouEquipment6->setScale(0.6f);
+		addChild(YouEquipment6, 12, 212);
+
+		//设置我方装备可见
+		for (int q = 1; q <= MyBuyWeaponNum; ++q)
+		{
+			Sprite *TMP = (Sprite *)this->getChildByTag(810 + q);
+			TMP->setVisible(true);
+		}
+
+		//设置对方装备可见
+		/*for (int q = 1; q <= YouBuyWeaponNum; ++q)
+		{
+		Sprite *TMP = (Sprite *)this->getChildByTag();
+		TMP->setVisible(true);
+		}*/
+
+		//我方金币
+		auto MyGoldZhanji = Sprite::create("gold.png");
+		MyGoldZhanji->setPosition(Vec2(450, 200));
+		MyGoldZhanji->setScale(1.0f);
+		addChild(MyGoldZhanji, 14, 85);
+
+		CCString *MygoldCCstringZhanji = CCString::createWithFormat("%d", MyGold);
+		std::string MygoldstringZhanji = MygoldCCstringZhanji->getCString();
+		Label *MyGoldNumZhanji = Label::createWithTTF(MygoldstringZhanji, "fonts/Marker Felt.ttf", 32);
+		MyGoldNumZhanji->setPosition(Vec2(520, 200));
+		MyGoldNumZhanji->setScale(1.0f);
+		addChild(MyGoldNumZhanji, 14, 86);
+
+		//对方金币
+		auto YouGoldZhanji = Sprite::create("gold.png");
+		YouGoldZhanji->setPosition(Vec2(1350, 200));
+		YouGoldZhanji->setScale(1.0f);
+		addChild(YouGoldZhanji, 14, 87);
+
+		CCString *YougoldCCstringZhanji = CCString::createWithFormat("%d", YourGold);
+		std::string YougoldstringZhanji = YougoldCCstringZhanji->getCString();
+		Label *YouGoldNumZhanji = Label::createWithTTF(YougoldstringZhanji, "fonts/Marker Felt.ttf", 32);
+		YouGoldNumZhanji->setPosition(Vec2(1420, 200));
+		YouGoldNumZhanji->setScale(1.0f);
+		addChild(YouGoldNumZhanji, 14, 88);
+
+		//我方击杀
+
+		auto MeKillstr = Label::create(KillStr, "Arial", 36);
+		MeKillstr->setPosition(Vec2(300, 800));
+		addChild(MeKillstr, 14, 89);
+
+		CCString *MeKillCCstring = CCString::createWithFormat("%d", MeKill);
+		std::string MeKillstring = MeKillCCstring->getCString();
+		Label *MeKillNum = Label::createWithTTF(MeKillstring, "fonts/Marker Felt.ttf", 35);
+		MeKillNum->setPosition(Vec2(300, 750));
+		MeKillNum->setScale(1.0f);
+		addChild(MeKillNum, 14, 90);
+
+
+		//我方死亡
+		auto MeDeadstr = Label::create(DeadStr, "Arial", 36);
+		MeDeadstr->setPosition(Vec2(700, 800));
+		addChild(MeDeadstr, 14, 91);
+
+		CCString *MeDeadCCstring = CCString::createWithFormat("%d", MeDead);
+		std::string MeDeadstring = MeDeadCCstring->getCString();
+		Label *MeDeadNum = Label::createWithTTF(MeDeadstring, "fonts/Marker Felt.ttf", 35);
+		MeDeadNum->setPosition(Vec2(700, 750));
+		MeDeadNum->setScale(1.0f);
+		addChild(MeDeadNum, 14, 92);
+
+		//对方击杀
+
+		auto YouKillstr = Label::create(KillStr, "Arial", 36);
+		YouKillstr->setPosition(Vec2(1200, 800));
+		addChild(YouKillstr, 14, 93);
+
+		CCString *YouKillCCstring = CCString::createWithFormat("%d", YouKill);
+		std::string YouKillstring = YouKillCCstring->getCString();
+		Label *YouKillNum = Label::createWithTTF(YouKillstring, "fonts/Marker Felt.ttf", 35);
+		YouKillNum->setPosition(Vec2(1200, 750));
+		YouKillNum->setScale(1.0f);
+		addChild(YouKillNum, 14, 94);
+
+
+		//对方死亡
+		auto YouDeadstr = Label::create(DeadStr, "Arial", 36);
+		YouDeadstr->setPosition(Vec2(1600, 800));
+		addChild(YouDeadstr, 14, 95);
+
+		CCString *YouDeadCCstring = CCString::createWithFormat("%d", YouDead);
+		std::string YouDeadstring = YouDeadCCstring->getCString();
+		Label *YouDeadNum = Label::createWithTTF(YouDeadstring, "fonts/Marker Felt.ttf", 35);
+		YouDeadNum->setPosition(Vec2(1600, 750));
+		YouDeadNum->setScale(1.0f);
+		addChild(YouDeadNum, 14, 96);
+
+	}
+}
+
+void MapScene::ZhanjiBack(Ref *sender, Widget::TouchEventType controlevent)
+{
+	if (controlevent == Widget::TouchEventType::ENDED)
+	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
+		for (int i = 0; i <= 17; ++i)
+		{
+			removeChildByTag(80 + i);
+		}
+		for (int i = 1; i <= 12; ++i)
+		{
+			removeChildByTag(200 + i);
+		}
+		for (int j = 1; j <= MyBuyWeaponNum; ++j)
+		{
+			Sprite *TMP = (Sprite *)this->getChildByTag(810 + j);
+			TMP->setVisible(false);
+		}
+		//恢复商城可触发
+		Button *tmp1 = (Button *)this->getChildByTag(50);
+		tmp1->setTouchEnabled(true);
+		//恢复战绩可触发
+		Button *tmp2 = (Button *)this->getChildByTag(51);
+		tmp2->setTouchEnabled(true);
+	}
+}
 
 
 void MapScene::Shopbuy1(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1081,7 +1389,7 @@ void MapScene::Shopbuy1(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon1Detail->setScale(0.7f);
 		addChild(Weapon1Detail, 13,1011);
 
-		if (Gold >= 1740&&BuyWeaponNum<=5)
+		if (MyGold >= 1740&&MyBuyWeaponNum<=5)
 		{
 			Button *BuyButton11=Button::create();
 			BuyButton11->loadTextures("buy1.png","buy1.png","");
@@ -1091,7 +1399,7 @@ void MapScene::Shopbuy1(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton11, 14, 1012);
 		}
 
-		if (Gold < 1740 || BuyWeaponNum >= 6)
+		if (MyGold < 1740 || MyBuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton12;
 			BuyButton12 = Sprite::create("buy2.png");
@@ -1107,6 +1415,7 @@ void MapScene::Shopbuy2(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1132,7 +1441,7 @@ void MapScene::Shopbuy2(Ref *sender, Widget::TouchEventType controlevent)
 		Weapon2Detail->setScale(0.7f);
 		addChild(Weapon2Detail, 13,1021);
 
-		if (Gold >= 2140 && BuyWeaponNum <= 5)
+		if (MyGold >= 2140 && MyBuyWeaponNum <= 5)
 		{
 			Button *BuyButton21=Button::create();
 			BuyButton21->loadTextures("buy1.png", "buy1.png", "");
@@ -1142,7 +1451,7 @@ void MapScene::Shopbuy2(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton21, 14, 1022);
 		}
 
-		if (Gold < 2140 || BuyWeaponNum >= 6)
+		if (MyGold < 2140 || MyBuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton22;
 			BuyButton22 = Sprite::create("buy2.png");
@@ -1157,6 +1466,7 @@ void MapScene::Shopbuy3(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1183,7 +1493,7 @@ void MapScene::Shopbuy3(Ref *sender, Widget::TouchEventType controlevent)
 		addChild(Weapon3Detail, 13, 1031);
 
 
-		if (Gold >= 2300 && BuyWeaponNum <= 5)
+		if (MyGold >= 2300 && MyBuyWeaponNum <= 5)
 		{
 			Button *BuyButton31=Button::create();
 			BuyButton31->loadTextures("buy1.png", "buy1.png", "");
@@ -1193,7 +1503,7 @@ void MapScene::Shopbuy3(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton31, 14, 1032);
 		}
 
-		if (Gold < 2300 || BuyWeaponNum >= 6)
+		if (MyGold < 2300 || MyBuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton32;
 			BuyButton32 = Sprite::create("buy2.png");
@@ -1208,6 +1518,7 @@ void MapScene::Shopbuy4(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1234,7 +1545,7 @@ void MapScene::Shopbuy4(Ref *sender, Widget::TouchEventType controlevent)
 		addChild(Weapon4Detail, 13, 1041);
 
 
-		if (Gold >= 2990 && BuyWeaponNum <= 5)
+		if (MyGold >= 2990 && MyBuyWeaponNum <= 5)
 		{
 			Button *BuyButton41=Button::create();
 			BuyButton41->loadTextures("buy1.png", "buy1.png", "");
@@ -1244,7 +1555,7 @@ void MapScene::Shopbuy4(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton41, 14, 1042);
 		}
 
-		if (Gold < 2990 || BuyWeaponNum >= 6)
+		if (MyGold < 2990 || MyBuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton42;
 			BuyButton42 = Sprite::create("buy2.png");
@@ -1259,6 +1570,7 @@ void MapScene::Shopbuy5(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1285,7 +1597,7 @@ void MapScene::Shopbuy5(Ref *sender, Widget::TouchEventType controlevent)
 		addChild(Weapon5Detail, 13, 1051);
 
 
-		if (Gold >= 900 && BuyWeaponNum <= 5)
+		if (MyGold >= 900 && MyBuyWeaponNum <= 5)
 		{
 			Button *BuyButton51=Button::create();
 			BuyButton51->loadTextures("buy1.png", "buy1.png", "");
@@ -1295,7 +1607,7 @@ void MapScene::Shopbuy5(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton51, 14, 1052);
 		}
 
-		if (Gold < 900 || BuyWeaponNum >= 6)
+		if (MyGold < 900 || MyBuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton52;
 			BuyButton52 = Sprite::create("buy2.png");
@@ -1310,6 +1622,7 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 		removeChildByTag(1011);
 		removeChildByTag(1012);
 		removeChildByTag(1013);
@@ -1336,7 +1649,7 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 		addChild(Weapon6Detail, 13, 1061);
 
 
-		if (Gold >= 710 && BuyWeaponNum <= 5)
+		if (MyGold >= 710 && MyBuyWeaponNum <= 5)
 		{
 			Button *BuyButton61=Button::create();
 			BuyButton61->loadTextures("buy1.png", "buy1.png", "");
@@ -1346,7 +1659,7 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 			addChild(BuyButton61, 14, 1062);
 		}
 
-		if (Gold < 710||BuyWeaponNum >= 6)
+		if (MyGold < 710||MyBuyWeaponNum >= 6)
 		{
 			Sprite *BuyButton62;
 			BuyButton62 = Sprite::create("buy2.png");
@@ -1361,16 +1674,17 @@ void MapScene::Shopbuy6(Ref *sender, Widget::TouchEventType controlevent)
 //武器一确认购买
 void MapScene::Buyit1(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum<=5)
+	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum<=5)
 	{
-		BuyWeaponNum++;
+		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
 		Sprite *MyEquip1 = Sprite::create("weapon1.png");
-		MyEquip1->setPosition(Vec2(350+BuyWeaponNum*150,200));
+		MyEquip1->setPosition(Vec2(350+MyBuyWeaponNum*150,200));
 		MyEquip1->setScale(0.7f);
-		addChild(MyEquip1, 14, 40 + BuyWeaponNum);
-		Gold -= 1740;
+		addChild(MyEquip1, 14, 40 + MyBuyWeaponNum);
+		MyGold -= 1740;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1399,16 +1713,17 @@ void MapScene::Buyit1(Ref *sender, Widget::TouchEventType controlevent)
 //武器二确认购买
 void MapScene::Buyit2(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
+	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
 	{
-		BuyWeaponNum++;
+		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
 		Sprite *MyEquip2 = Sprite::create("weapon2.png");
-		MyEquip2->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
+		MyEquip2->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip2->setScale(0.7f);
-		addChild(MyEquip2, 14, 40+BuyWeaponNum);
-		Gold -= 2140;
+		addChild(MyEquip2, 14, 40+MyBuyWeaponNum);
+		MyGold -= 2140;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1437,16 +1752,17 @@ void MapScene::Buyit2(Ref *sender, Widget::TouchEventType controlevent)
 //武器三确认购买
 void MapScene::Buyit3(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
+	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
 	{
-		BuyWeaponNum++;
+		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
 		Sprite *MyEquip3 = Sprite::create("weapon3.png");
-		MyEquip3->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
+		MyEquip3->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip3->setScale(0.7f);
-		addChild(MyEquip3, 14, 40 + BuyWeaponNum);
-		Gold -= 2300;
+		addChild(MyEquip3, 14, 40 + MyBuyWeaponNum);
+		MyGold -= 2300;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1475,16 +1791,17 @@ void MapScene::Buyit3(Ref *sender, Widget::TouchEventType controlevent)
 //武器四确认购买
 void MapScene::Buyit4(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
+	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
 	{
-		BuyWeaponNum++;
+		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
 		Sprite *MyEquip4 = Sprite::create("weapon4.png");
-		MyEquip4->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
+		MyEquip4->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip4->setScale(0.7f);
-		addChild(MyEquip4, 14, 40 + BuyWeaponNum);
-		Gold -= 2990;
+		addChild(MyEquip4, 14, 40 + MyBuyWeaponNum);
+		MyGold -= 2990;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1513,18 +1830,19 @@ void MapScene::Buyit4(Ref *sender, Widget::TouchEventType controlevent)
 //武器五确认购买
 void MapScene::Buyit5(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
+	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
 	{
-		BuyWeaponNum++;
-		CCString *BuyCCstring5 = CCString::createWithFormat("%d", BuyWeaponNum);
+		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
+		CCString *BuyCCstring5 = CCString::createWithFormat("%d", MyBuyWeaponNum);
 		std::string buystring5 = BuyCCstring5->getCString();
 		Sprite *MyEquip5 = Sprite::create("weapon5.png");
-		MyEquip5->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
+		MyEquip5->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip5->setScale(0.7f);
-		addChild(MyEquip5, 14, 40 + BuyWeaponNum);
-		Gold -= 900;
+		addChild(MyEquip5, 14, 40 + MyBuyWeaponNum);
+		MyGold -= 900;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1553,18 +1871,19 @@ void MapScene::Buyit5(Ref *sender, Widget::TouchEventType controlevent)
 //武器六确认购买
 void MapScene::Buyit6(Ref *sender, Widget::TouchEventType controlevent)
 {
-	if (controlevent == Widget::TouchEventType::ENDED&&BuyWeaponNum <= 5)
+	if (controlevent == Widget::TouchEventType::ENDED&&MyBuyWeaponNum <= 5)
 	{
-		BuyWeaponNum++;
-		CCString *BuyCCstring6 = CCString::createWithFormat("%d", BuyWeaponNum);
+		MyBuyWeaponNum++;
+		SimpleAudioEngine::getInstance()->playEffect("GOLD.wav");
+		CCString *BuyCCstring6 = CCString::createWithFormat("%d", MyBuyWeaponNum);
 		std::string buystring6 = BuyCCstring6->getCString();
 		Sprite *MyEquip6 = Sprite::create("weapon6.png");
-		MyEquip6->setPosition(Vec2(350 + BuyWeaponNum * 150, 200));
+		MyEquip6->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip6->setScale(0.7f);
-		addChild(MyEquip6, 14, 40 + BuyWeaponNum);
-		Gold -= 710;
+		addChild(MyEquip6, 14, 40 + MyBuyWeaponNum);
+		MyGold -= 710;
 		removeChildByTag(55);
-		CCString *goldCCstring = CCString::createWithFormat("%d", Gold);
+		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
 		std::string goldstring = goldCCstring->getCString();
 		Label *GoldNum = Label::createWithTTF(goldstring, "fonts/Marker Felt.ttf", 32);
 		GoldNum->setPosition(Vec2(50, 450));
@@ -1595,7 +1914,8 @@ void MapScene::ShopBack(Ref *sender, Widget::TouchEventType controlevent)
 {
 	if (controlevent == Widget::TouchEventType::ENDED)
 	{
-		for (int p = 1; p <= BuyWeaponNum; ++p)
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
+		for (int p = 1; p <= MyBuyWeaponNum; ++p)
 		{
 			Sprite *Tmp = (Sprite *)this->getChildByTag(40 + p);
 			Tmp->setVisible(false);
@@ -1641,8 +1961,12 @@ void MapScene::ShopBack(Ref *sender, Widget::TouchEventType controlevent)
 		removeChildByTag(1061);
 		removeChildByTag(1062);
 		removeChildByTag(1063);
-		Button *tmp = (Button *)this->getChildByTag(50);
-		tmp->setTouchEnabled(true);
+		//恢复商城可触发
+		Button *tmp1 = (Button *)this->getChildByTag(50);
+		tmp1->setTouchEnabled(true);
+		//恢复战绩可触发
+		Button *tmp2 = (Button *)this->getChildByTag(51);
+		tmp2->setTouchEnabled(true);
 	}
 }
 //使用removebytag至关重要，byTag还可以提供访问

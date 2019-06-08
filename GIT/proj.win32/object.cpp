@@ -34,11 +34,11 @@ void object::objectInit()
 	enemy = Sprite::create("gold.png");
 	enemy->setPosition(Vec2(-100, -100));
 	addChild(enemy);
-	progressSprite = Sprite::create("Progress.png");
+	progressSprite = Sprite::create("BloodLine.png");
 	Loading = ProgressTimer::create(progressSprite);
 	addChild(Loading);
 	Loading->setType(kCCProgressTimerTypeBar);
-	Loading->setScale(0.1f);
+	Loading->setScale(0.35f);
 	Loading->setMidpoint(Vec2(0, 0));
 	Loading->setBarChangeRate(Vec2(1.0, 0));
 	Loading->setPercentage(100);
