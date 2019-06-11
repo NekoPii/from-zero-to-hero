@@ -40,6 +40,10 @@ public:
 	void Tower2(float dt);
 	void soldersMake1(float dt);
 	void soldersMake2(float dt);
+	void skill1(float dt);
+	void skill2(float dt);
+	void skill3(float dt);
+	void skill4(float dt);
 	float getDistance(Vec2 me, Vec2 you);
 	Sprite* chosenEnemy;
 	Sprite* chosenFriend;
@@ -113,7 +117,10 @@ private:
 	Button *BuyButton41;
 	Button *BuyButton51;
 	Button *BuyButton61;
-
+	ProgressTimer *SKILL1TIME;
+	ProgressTimer *SKILL2TIME;
+	ProgressTimer *SKILL3TIME;
+	ProgressTimer *SKILL4TIME;
 
 };
 

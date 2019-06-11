@@ -146,13 +146,85 @@ bool MapScene::init()
 	addChild(hero,0,2046);
 	Friend.pushBack(hero->heroSprite);
 
+	//技能一
+	Sprite *SKILL11 = Sprite::create("SKILL/skill1.png");
+	SKILL11->setPosition(Vec2(origin.x + visibleSize.width*0.35, origin.y + visibleSize.height*0.1));
+	SKILL11->setScale(0.5f);
+	SKILL11->setVisible(true);
+	addChild(SKILL11, 6, 901);
+	Sprite *SKILL12 = Sprite::create("SKILL/skill1shade.png");
+	SKILL12->setPosition(Vec2(origin.x + visibleSize.width*0.35, origin.y + visibleSize.height*0.1));
+	SKILL12->setScale(0.5f);
+	SKILL12->setVisible(false);
+	addChild(SKILL12, 6, 902);
+	auto SKILL13 = Sprite::create("SKILL/skill1.png");
+	SKILL1TIME = ProgressTimer::create(SKILL13);
+	SKILL1TIME->setScale(0.5f);
+	SKILL1TIME->setType(kCCProgressTimerTypeRadial);
+	SKILL1TIME->setPosition(Vec2(origin.x + visibleSize.width*0.35, origin.y + visibleSize.height*0.1));
+	addChild(SKILL1TIME, 6, 903);
+
+	//技能二
+	Sprite *SKILL21 = Sprite::create("SKILL/skill2.png");
+	SKILL21->setPosition(Vec2(origin.x + visibleSize.width*0.45, origin.y + visibleSize.height*0.1));
+	SKILL21->setScale(0.5f);
+	SKILL21->setVisible(true);
+	addChild(SKILL21, 6, 904);
+	Sprite *SKILL22 = Sprite::create("SKILL/skill2shade.png");
+	SKILL22->setPosition(Vec2(origin.x + visibleSize.width*0.45, origin.y + visibleSize.height*0.1));
+	SKILL22->setScale(0.5f);
+	SKILL22->setVisible(false);
+	addChild(SKILL22, 6, 905);
+	auto SKILL23 = Sprite::create("SKILL/skill2.png");
+	SKILL2TIME = ProgressTimer::create(SKILL23);
+	SKILL2TIME->setScale(0.5f);
+	SKILL2TIME->setType(kCCProgressTimerTypeRadial);
+	SKILL2TIME->setPosition(Vec2(origin.x + visibleSize.width*0.45, origin.y + visibleSize.height*0.1));
+	addChild(SKILL2TIME, 6, 906);
+
+
+	//技能三
+	Sprite *SKILL31 = Sprite::create("SKILL/skill3.png");
+	SKILL31->setPosition(Vec2(origin.x + visibleSize.width*0.55, origin.y + visibleSize.height*0.1));
+	SKILL31->setScale(0.5f);
+	SKILL31->setVisible(true);
+	addChild(SKILL31, 6, 907);
+	Sprite *SKILL32 = Sprite::create("SKILL/skill3shade.png");
+	SKILL32->setPosition(Vec2(origin.x + visibleSize.width*0.55, origin.y + visibleSize.height*0.1));
+	SKILL32->setScale(0.5f);
+	SKILL32->setVisible(false);
+	addChild(SKILL32, 6, 908);
+	auto SKILL33 = Sprite::create("SKILL/skill3.png");
+	SKILL3TIME = ProgressTimer::create(SKILL33);
+	SKILL3TIME->setScale(0.5f);
+	SKILL3TIME->setType(kCCProgressTimerTypeRadial);
+	SKILL3TIME->setPosition(Vec2(origin.x + visibleSize.width*0.55, origin.y + visibleSize.height*0.1));
+	addChild(SKILL3TIME, 6, 909);
+
+	//技能四
+	Sprite *SKILL41 = Sprite::create("SKILL/skill4.png");
+	SKILL41->setPosition(Vec2(origin.x + visibleSize.width*0.65, origin.y + visibleSize.height*0.1));
+	SKILL41->setScale(0.5f);
+	SKILL41->setVisible(true);
+	addChild(SKILL41, 6, 910);
+	Sprite *SKILL42 = Sprite::create("SKILL/skill4shade.png");
+	SKILL42->setPosition(Vec2(origin.x + visibleSize.width*0.65, origin.y + visibleSize.height*0.1));
+	SKILL42->setScale(0.5f);
+	SKILL42->setVisible(false);
+	addChild(SKILL42, 6, 911);
+	auto SKILL43 = Sprite::create("SKILL/skill4.png");
+	SKILL4TIME = ProgressTimer::create(SKILL43);
+	SKILL4TIME->setScale(0.5f);
+	SKILL4TIME->setType(kCCProgressTimerTypeRadial);
+	SKILL4TIME->setPosition(Vec2(origin.x + visibleSize.width*0.65, origin.y + visibleSize.height*0.1));
+	addChild(SKILL4TIME, 6, 912);
 	
 	
 	auto dispatcher = Director::getInstance()->getEventDispatcher();
 	auto myKeyListener = EventListenerKeyboard::create();	
 	auto listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
-	myKeyListener->onKeyPressed = CC_CALLBACK_2(HelloWorld::onKeyPressed, this);
+	listener->onTouchBegan = CC_CALLBACK_2(MapScene::onTouchBegan, this);
+	myKeyListener->onKeyPressed = CC_CALLBACK_2(MapScene::onKeyPressed, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(myKeyListener, this);
 	this->schedule(schedule_selector(MapScene::heroIn), 0.1f);
@@ -278,39 +350,211 @@ bool MapScene::onTouchBegan(Touch* touch, Event* unused_event)
 	return false;
 }
 void MapScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event* event) {
-	Vec2 hero_position = hero->herosPosition();
-	Layer* layer1 = (Layer*)getChildByTag(1);
-	Vec2 layer_position = layer1->getPosition();
-	CCLOG("%f %f", layer_position.x, layer_position.y);
-	if (keycode == EventKeyboard::KeyCode::KEY_UP_ARROW) {
-		CCLOG("按下上键");
-		if (layer_position.y <= -1600)
-		{return; }
-		hero->heroSprite->setPosition(Vec2(hero_position.x, hero_position.y - 100));
-		layer1->setPosition(Vec2(layer_position.x, layer_position.y - 100));
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	if (keycode==EventKeyboard::KeyCode::KEY_Q)
+	{
+
+		Sprite *tmp1 = (Sprite *)this->getChildByTag(901);
+		tmp1->setVisible(false);
+		Sprite *tmp2 = (Sprite *)this->getChildByTag(902);
+		tmp2->setVisible(true);
+		schedule(schedule_selector(MapScene::skill1), 0.01f);
 	}
-	else if (keycode == EventKeyboard::KeyCode::KEY_LEFT_ARROW) {
-		CCLOG("按下左键");
-		if (layer_position.x >= 2300)
-		{return;}
-		hero->heroSprite->setPosition(Vec2(hero_position.x + 100, hero_position.y));
-		layer1->setPosition(Vec2(layer_position.x + 100, layer_position.y));
+	if (keycode== EventKeyboard::KeyCode::KEY_W)
+	{
+		Sprite *tmp1 = (Sprite *)this->getChildByTag(904);
+		tmp1->setVisible(false);
+		Sprite *tmp2 = (Sprite *)this->getChildByTag(905);
+		tmp2->setVisible(true);
+		schedule(schedule_selector(MapScene::skill2), 0.01f);
 	}
-	else if (keycode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW) {
-		CCLOG("按下右键");
-		if (layer_position.x <= -2300)
-		{return;}
-		hero->heroSprite->setPosition(Vec2(hero_position.x - 100, hero_position.y));
-		layer1->setPosition(Vec2(layer_position.x - 100, layer_position.y));
+	if (keycode== EventKeyboard::KeyCode::KEY_E)
+	{
+		Sprite *tmp1 = (Sprite *)this->getChildByTag(907);
+		tmp1->setVisible(false);
+		Sprite *tmp2 = (Sprite *)this->getChildByTag(908);
+		tmp2->setVisible(true);
+		schedule(schedule_selector(MapScene::skill3), 0.01f);
 	}
-	else if (keycode == EventKeyboard::KeyCode::KEY_DOWN_ARROW) {
-		if (layer_position.y >= 1600)
-		{return;}
-		hero->heroSprite->setPosition(Vec2(hero_position.x, hero_position.y + 100));
-		layer1->setPosition(Vec2(layer_position.x, layer_position.y + 100));
-		CCLOG("按下下键");
+	if (keycode== EventKeyboard::KeyCode::KEY_R)
+	{
+		Sprite *tmp1 = (Sprite *)this->getChildByTag(910);
+		tmp1->setVisible(false);
+		Sprite *tmp2 = (Sprite *)this->getChildByTag(911);
+		tmp2->setVisible(true);
+		schedule(schedule_selector(MapScene::skill4), 0.01f);
 	}
 }
+
+void MapScene::skill1(float dt)
+{
+	float Current1 = SKILL1TIME->getPercentage();
+	if (Current1 <= 99.9)
+	{
+		Current1 += 0.01;
+		SKILL1TIME->setPercentage(Current1);
+
+	}
+	else
+	{
+		auto visibleSize = Director::getInstance()->getVisibleSize();
+		Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+		unschedule(schedule_selector(MapScene::skill1));
+
+		removeChildByTag(901);
+		removeChildByTag(902);
+		removeChildByTag(903);
+
+		auto myKeyListener = EventListenerKeyboard::create();
+		myKeyListener->onKeyPressed = CC_CALLBACK_2(MapScene::onKeyPressed, this);
+
+		Sprite *SKILL11 = Sprite::create("SKILL/skill1.png");
+		SKILL11->setPosition(Vec2(origin.x + visibleSize.width*0.35, origin.y + visibleSize.height*0.1));
+		SKILL11->setScale(0.5f);
+		SKILL11->setVisible(true);
+		addChild(SKILL11, 6, 901);
+		Sprite *SKILL12 = Sprite::create("SKILL/skill1shade.png");
+		SKILL12->setPosition(Vec2(origin.x + visibleSize.width*0.35, origin.y + visibleSize.height*0.1));
+		SKILL12->setScale(0.5f);
+		SKILL12->setVisible(false);
+		addChild(SKILL12, 6, 902);
+		auto SKILL13 = Sprite::create("SKILL/skill1.png");
+		SKILL1TIME = ProgressTimer::create(SKILL13);
+		SKILL1TIME->setScale(0.5f);
+		SKILL1TIME->setType(kCCProgressTimerTypeRadial);
+		SKILL1TIME->setPosition(Vec2(origin.x + visibleSize.width*0.35, origin.y + visibleSize.height*0.1));
+		addChild(SKILL1TIME, 6, 903);
+	}
+}
+
+void MapScene::skill2(float dt)
+{
+	float Current2 = SKILL2TIME->getPercentage();
+	if (Current2 <= 99.9)
+	{
+		Current2 += 0.2;
+		SKILL2TIME->setPercentage(Current2);
+
+	}
+	else
+	{
+		auto visibleSize = Director::getInstance()->getVisibleSize();
+		Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+		unschedule(schedule_selector(MapScene::skill2));
+
+		removeChildByTag(904);
+		removeChildByTag(905);
+		removeChildByTag(906);
+
+		auto myKeyListener = EventListenerKeyboard::create();
+		myKeyListener->onKeyPressed = CC_CALLBACK_2(MapScene::onKeyPressed, this);
+
+		Sprite *SKILL21 = Sprite::create("SKILL/skill2.png");
+		SKILL21->setPosition(Vec2(origin.x + visibleSize.width*0.45, origin.y + visibleSize.height*0.1));
+		SKILL21->setScale(0.5f);
+		SKILL21->setVisible(true);
+		addChild(SKILL21, 6, 904);
+		Sprite *SKILL22 = Sprite::create("SKILL/skill2shade.png");
+		SKILL22->setPosition(Vec2(origin.x + visibleSize.width*0.45, origin.y + visibleSize.height*0.1));
+		SKILL22->setScale(0.5f);
+		SKILL22->setVisible(false);
+		addChild(SKILL22, 6, 905);
+		auto SKILL23 = Sprite::create("SKILL/skill2.png");
+		SKILL2TIME = ProgressTimer::create(SKILL23);
+		SKILL2TIME->setScale(0.5f);
+		SKILL2TIME->setType(kCCProgressTimerTypeRadial);
+		SKILL2TIME->setPosition(Vec2(origin.x + visibleSize.width*0.45, origin.y + visibleSize.height*0.1));
+		addChild(SKILL2TIME, 6, 906);
+	}
+}
+
+void MapScene::skill3(float dt)
+{
+	float Current3 = SKILL3TIME->getPercentage();
+	if (Current3 <= 99.9)
+	{
+		Current3 += 0.05;
+		SKILL3TIME->setPercentage(Current3);
+
+	}
+	else
+	{
+		auto visibleSize = Director::getInstance()->getVisibleSize();
+		Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+		unschedule(schedule_selector(MapScene::skill3));
+
+		removeChildByTag(907);
+		removeChildByTag(908);
+		removeChildByTag(909);
+
+		auto myKeyListener = EventListenerKeyboard::create();
+		myKeyListener->onKeyPressed = CC_CALLBACK_2(MapScene::onKeyPressed, this);
+
+		Sprite *SKILL31 = Sprite::create("SKILL/skill3.png");
+		SKILL31->setPosition(Vec2(origin.x + visibleSize.width*0.55, origin.y + visibleSize.height*0.1));
+		SKILL31->setScale(0.5f);
+		SKILL31->setVisible(true);
+		addChild(SKILL31, 6, 907);
+		Sprite *SKILL32 = Sprite::create("SKILL/skill3shade.png");
+		SKILL32->setPosition(Vec2(origin.x + visibleSize.width*0.55, origin.y + visibleSize.height*0.1));
+		SKILL32->setScale(0.5f);
+		SKILL32->setVisible(false);
+		addChild(SKILL32, 6, 908);
+		auto SKILL33 = Sprite::create("SKILL/skill3.png");
+		SKILL3TIME = ProgressTimer::create(SKILL33);
+		SKILL3TIME->setScale(0.5f);
+		SKILL3TIME->setType(kCCProgressTimerTypeRadial);
+		SKILL3TIME->setPosition(Vec2(origin.x + visibleSize.width*0.55, origin.y + visibleSize.height*0.1));
+		addChild(SKILL3TIME, 6, 909);
+	}
+}
+
+void MapScene::skill4(float dt)
+{
+	float Current4 = SKILL4TIME->getPercentage();
+	if (Current4 <= 99.9)
+	{
+		Current4 += 0.1;
+		SKILL4TIME->setPercentage(Current4);
+
+	}
+	else
+	{
+		auto visibleSize = Director::getInstance()->getVisibleSize();
+		Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+		unschedule(schedule_selector(MapScene::skill4));
+
+		removeChildByTag(910);
+		removeChildByTag(911);
+		removeChildByTag(912);
+
+		auto myKeyListener = EventListenerKeyboard::create();
+		myKeyListener->onKeyPressed = CC_CALLBACK_2(MapScene::onKeyPressed, this);
+
+		Sprite *SKILL41 = Sprite::create("SKILL/skill4.png");
+		SKILL41->setPosition(Vec2(origin.x + visibleSize.width*0.65, origin.y + visibleSize.height*0.1));
+		SKILL41->setScale(0.5f);
+		SKILL41->setVisible(true);
+		addChild(SKILL41, 6, 910);
+		Sprite *SKILL42 = Sprite::create("SKILL/skill4shade.png");
+		SKILL42->setPosition(Vec2(origin.x + visibleSize.width*0.65, origin.y + visibleSize.height*0.1));
+		SKILL42->setScale(0.5f);
+		SKILL42->setVisible(false);
+		addChild(SKILL42, 6, 911);
+		auto SKILL43 = Sprite::create("SKILL/skill4.png");
+		SKILL4TIME = ProgressTimer::create(SKILL43);
+		SKILL4TIME->setScale(0.5f);
+		SKILL4TIME->setType(kCCProgressTimerTypeRadial);
+		SKILL4TIME->setPosition(Vec2(origin.x + visibleSize.width*0.65, origin.y + visibleSize.height*0.1));
+		addChild(SKILL4TIME, 6, 912);
+	}
+}
+
 
 void MapScene::heroIn(float dt)
 {
@@ -1240,7 +1484,10 @@ void MapScene::ZhanjiCall(Ref *sender, Widget::TouchEventType controlevent)
 		for (int q = 1; q <= MyBuyWeaponNum; ++q)
 		{
 			Sprite *TMP = (Sprite *)this->getChildByTag(810 + q);
-			TMP->setVisible(true);
+			if (TMP != nullptr)
+			{
+				TMP->setVisible(true);
+			}
 		}
 
 		//设置对方装备可见
@@ -1682,6 +1929,13 @@ void MapScene::Buyit1(Ref *sender, Widget::TouchEventType controlevent)
 		MyEquip1->setPosition(Vec2(350+MyBuyWeaponNum*150,200));
 		MyEquip1->setScale(0.7f);
 		addChild(MyEquip1, 14, 40 + MyBuyWeaponNum);
+
+		Sprite *MyEquip1Zhanji = Sprite::create("weapon1.png");
+		MyEquip1Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
+		MyEquip1Zhanji->setScale(0.5f);
+		MyEquip1Zhanji->setVisible(false);
+		addChild(MyEquip1Zhanji, 14, 810 + MyBuyWeaponNum);
+
 		MyGold -= 1740;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
@@ -1721,6 +1975,13 @@ void MapScene::Buyit2(Ref *sender, Widget::TouchEventType controlevent)
 		MyEquip2->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip2->setScale(0.7f);
 		addChild(MyEquip2, 14, 40+MyBuyWeaponNum);
+
+		Sprite *MyEquip2Zhanji = Sprite::create("weapon2.png");
+		MyEquip2Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
+		MyEquip2Zhanji->setScale(0.5f);
+		MyEquip2Zhanji->setVisible(false);
+		addChild(MyEquip2Zhanji, 14, 810 + MyBuyWeaponNum);
+
 		MyGold -= 2140;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
@@ -1760,6 +2021,13 @@ void MapScene::Buyit3(Ref *sender, Widget::TouchEventType controlevent)
 		MyEquip3->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip3->setScale(0.7f);
 		addChild(MyEquip3, 14, 40 + MyBuyWeaponNum);
+
+		Sprite *MyEquip3Zhanji = Sprite::create("weapon3.png");
+		MyEquip3Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
+		MyEquip3Zhanji->setScale(0.5f);
+		MyEquip3Zhanji->setVisible(false);
+		addChild(MyEquip3Zhanji, 14, 810 + MyBuyWeaponNum);
+
 		MyGold -= 2300;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
@@ -1799,6 +2067,13 @@ void MapScene::Buyit4(Ref *sender, Widget::TouchEventType controlevent)
 		MyEquip4->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip4->setScale(0.7f);
 		addChild(MyEquip4, 14, 40 + MyBuyWeaponNum);
+
+		Sprite *MyEquip4Zhanji = Sprite::create("weapon4.png");
+		MyEquip4Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
+		MyEquip4Zhanji->setScale(0.5f);
+		MyEquip4Zhanji->setVisible(false);
+		addChild(MyEquip4Zhanji, 14, 810 + MyBuyWeaponNum);
+
 		MyGold -= 2990;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
@@ -1840,6 +2115,13 @@ void MapScene::Buyit5(Ref *sender, Widget::TouchEventType controlevent)
 		MyEquip5->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip5->setScale(0.7f);
 		addChild(MyEquip5, 14, 40 + MyBuyWeaponNum);
+
+		Sprite *MyEquip5Zhanji = Sprite::create("weapon5.png");
+		MyEquip5Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
+		MyEquip5Zhanji->setScale(0.5f);
+		MyEquip5Zhanji->setVisible(false);
+		addChild(MyEquip5Zhanji, 14, 810 + MyBuyWeaponNum);
+
 		MyGold -= 900;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);
@@ -1881,6 +2163,13 @@ void MapScene::Buyit6(Ref *sender, Widget::TouchEventType controlevent)
 		MyEquip6->setPosition(Vec2(350 + MyBuyWeaponNum * 150, 200));
 		MyEquip6->setScale(0.7f);
 		addChild(MyEquip6, 14, 40 + MyBuyWeaponNum);
+
+		Sprite *MyEquip6Zhanji = Sprite::create("weapon6.png");
+		MyEquip6Zhanji->setPosition(Vec2(150 + MyBuyWeaponNum * 100, 300));
+		MyEquip6Zhanji->setScale(0.5f);
+		MyEquip6Zhanji->setVisible(false);
+		addChild(MyEquip6Zhanji, 14, 810 + MyBuyWeaponNum);
+
 		MyGold -= 710;
 		removeChildByTag(55);
 		CCString *goldCCstring = CCString::createWithFormat("%d", MyGold);

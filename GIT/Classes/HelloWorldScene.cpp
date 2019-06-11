@@ -2,6 +2,8 @@
 #include "proj.win32/HeroChoose.h"
 #include "GLOBAL.h"
 #include "SimpleAudioEngine.h"
+#include "cocos-ext.h"
+#include "ui/CocosGUI.h"
 
 
 int MyHeroID = 0;
@@ -67,7 +69,6 @@ bool HelloWorld::init()
 	spriteBackGround->setScale(1.0f);
     addChild(spriteBackGround, 0);
 
-	
 
     return true;
 }
@@ -155,3 +156,4 @@ void HelloWorld::CloseGame(cocos2d::Ref* pSenderClose)
 	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->end();
 }
+
