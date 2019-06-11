@@ -36,10 +36,15 @@ public:
 	void heroIn(float dt);
 	void Tower1(float dt);
 	void soldersMake(float dt);
+	void anti(float dt);
 	void soldersContrl(float dt);
 	void Tower2(float dt);
 	void soldersMake1(float dt);
 	void soldersMake2(float dt);
+	void skill1(float dt);
+	void skill2(float dt);
+	void skill3(float dt);
+	void skill4(float dt);
 	float getDistance(Vec2 me, Vec2 you);
 	Sprite* chosenEnemy;
 	Sprite* chosenFriend;
@@ -52,6 +57,8 @@ public:
 	vector<int>use;
 	void Shopcall(Ref *sender, Widget::TouchEventType controlevent);
 	void ShopBack(Ref *sender, Widget::TouchEventType controlevent);
+	void ZhanjiCall(Ref *sender, Widget::TouchEventType controlevent);
+	void ZhanjiBack(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy1(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy2(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy3(Ref *sender, Widget::TouchEventType controlevent);
@@ -111,7 +118,10 @@ private:
 	Button *BuyButton41;
 	Button *BuyButton51;
 	Button *BuyButton61;
-
+	ProgressTimer *SKILL1TIME;
+	ProgressTimer *SKILL2TIME;
+	ProgressTimer *SKILL3TIME;
+	ProgressTimer *SKILL4TIME;
 
 };
 

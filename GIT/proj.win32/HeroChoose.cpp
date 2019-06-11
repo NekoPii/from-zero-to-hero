@@ -3,8 +3,10 @@
 #include "proj.win32/HeroMakeSure2.h"
 #include "proj.win32/HeroMakeSure3.h"
 #include "HelloWorldScene.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
+using namespace CocosDenshion;
 
 Scene *HeroChoose::createScene()
 {
@@ -78,21 +80,25 @@ bool HeroChoose::init()
 //跳转到开始界面
 void HeroChoose::EnterHelloWorldScene(Ref *pSenderBack)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HelloWorld::createScene()));
 }
 
 
 void HeroChoose::OnRoleSelect1(Ref *pSenderEnter)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroMakeSure1::createScene()));
 }
 
 void HeroChoose::OnRoleSelect2(Ref *pSenderEnter)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroMakeSure2::createScene()));
 }
 
 void HeroChoose::OnRoleSelect3(Ref *pSenderEnter)
 {
+	SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HeroMakeSure3::createScene()));
 }
