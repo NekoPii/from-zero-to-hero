@@ -242,7 +242,7 @@ bool MapScene::init()
 	this->schedule(schedule_selector(MapScene::heroIn), 0.1f);
 	this->schedule(schedule_selector(MapScene::Tower1), 0.1f);
 	this->schedule(schedule_selector(MapScene::Tower2), 0.1f);
-	this->schedule(schedule_selector(MapScene::soldersMake), 115.0f);
+	this->schedule(schedule_selector(MapScene::soldersMake), 5.0f);
 	this->schedule(schedule_selector(MapScene::soldersMake1), 1135.0f);
 	this->schedule(schedule_selector(MapScene::soldersMake2), 1165.0f);
 	this->schedule(schedule_selector(MapScene::soldersContrl), 0.5f);
@@ -1010,7 +1010,7 @@ void MapScene::soldersContrl(float dt)
 			auto a = Enemy.at(i);
 			Size s = a->getContentSize();
 			//Rect rect = Rect(0, 0, s.width, s.height);
-			object* solder = (object*)getChildByTag(1023 + i);
+			object* solder = (object*)getChildByTag(1022 + i);
 			auto bloodLine = solder->Loading;
 			//CCLOG("**%d**", solder->blood);
 			if (solder->blood <= 0)
@@ -1224,7 +1224,7 @@ void MapScene::finishAttack(const int tag1, const int tag2)
 			solder2->Loading->setPercentage(cur);
 			if (solder2->blood <= 0)
 			{
-				if (tag2 == 2047)
+				if (tag2 == 2047&&solder2->blood<=0)
 				{
 					solder2->blood = 10;
 					solder2->enemy->setPosition(Vec2(1460, 1030));
@@ -1256,11 +1256,12 @@ void MapScene::finishAttack(const int tag1, const int tag2)
 		solder2->Loading->setPercentage(cur);
 		if (solder2->blood <= 0)
 		{
-			if (tag2 == 2047)
+			if (tag2 == 2047 && solder2->blood <= 0)
 			{
 				solder2->blood = 10;
 				solder2->enemy->setPosition(Vec2(1860, 1030));
 				solder2->Loading->setPosition(Vec2(1860, 1080));
+				solder2->Loading->setPercentage(100.0);
 			}
 			else
 			{
