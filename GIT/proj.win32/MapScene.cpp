@@ -85,6 +85,14 @@ bool MapScene::init()
 	BackButton->setPosition(Vec2(80, visibleSize.height - 30));
 	addChild(BackButton, 1);
 
+	//人物等级经验图标
+	Button *LevelButton = Button::create();
+	LevelButton->loadTextures("Startbutton.jpg", "Startbutton.jpg", "");
+	LevelButton->setPosition(Vec2(50, 1030));
+	LevelButton->setScale(1.0f);
+	LevelButton->addTouchEventListener(CC_CALLBACK_2(MapScene::LevelCall, this));
+	addChild(LevelButton, 9, 49);
+
 	//商城图标
 	Button *ShopButton = Button::create();
 	ShopButton->loadTextures("shop.png", "shop.png", "");
@@ -145,6 +153,10 @@ bool MapScene::init()
 	hero->initHeroSprite(8, Vec2(860, 540));
 	addChild(hero,0,2046);
 	Friend.pushBack(hero->heroSprite);
+	auto antiHero = object::createObject();
+	addChild(antiHero, 0, 2047);
+	antiHero->start(5, Vec2(1730, 1020));
+	Enemy.pushBack(antiHero->enemy);
 
 	//技能一
 	Sprite *SKILL11 = Sprite::create("SKILL/skill1.png");
@@ -230,11 +242,12 @@ bool MapScene::init()
 	this->schedule(schedule_selector(MapScene::heroIn), 0.1f);
 	this->schedule(schedule_selector(MapScene::Tower1), 0.1f);
 	this->schedule(schedule_selector(MapScene::Tower2), 0.1f);
-	this->schedule(schedule_selector(MapScene::soldersMake), 5.0f);
-	this->schedule(schedule_selector(MapScene::soldersMake1), 35.0f);
-	this->schedule(schedule_selector(MapScene::soldersMake2), 65.0f);
+	this->schedule(schedule_selector(MapScene::soldersMake), 115.0f);
+	this->schedule(schedule_selector(MapScene::soldersMake1), 1135.0f);
+	this->schedule(schedule_selector(MapScene::soldersMake2), 1165.0f);
 	this->schedule(schedule_selector(MapScene::soldersContrl), 0.5f);
 	this->schedule(schedule_selector(MapScene::mark), 0.1f);
+	this->schedule(schedule_selector(MapScene::anti), 0.8f);
 	return true;
 }
 void MapScene::mark(float dt)
@@ -321,6 +334,10 @@ bool MapScene::onTouchBegan(Touch* touch, Event* unused_event)
 					{
 						current = 2045;
 					}
+					else if (i == 1)
+					{
+						current = 2047;
+					}
 					else
 					{
 						current = x;
@@ -329,10 +346,11 @@ bool MapScene::onTouchBegan(Touch* touch, Event* unused_event)
 					//hero->heroAttack(hero_position, soldersPostion);
 					hero->heroSprite->stopAllActions();
 					hero->heroSprite->runAction(createAnimateH(4,"att", 7, MyHeroID));
-					if(i!=0)
+					if(i>1)
 					attactEnemy(hero_position, soldersPostion, 49,2046,x);
 					if (i == 0)
 						attactEnemy(hero_position, soldersPostion, 49, 2046, 2045);
+					if (i==1) attactEnemy(hero_position, soldersPostion, 49, 2046, 2047);
 					return false;
 				}
 			}
@@ -436,7 +454,6 @@ void MapScene::skill2(float dt)
 	{
 		Current2 += 0.2;
 		SKILL2TIME->setPercentage(Current2);
-
 	}
 	else
 	{
@@ -478,7 +495,6 @@ void MapScene::skill3(float dt)
 	{
 		Current3 += 0.05;
 		SKILL3TIME->setPercentage(Current3);
-
 	}
 	else
 	{
@@ -490,7 +506,6 @@ void MapScene::skill3(float dt)
 		removeChildByTag(907);
 		removeChildByTag(908);
 		removeChildByTag(909);
-
 		auto myKeyListener = EventListenerKeyboard::create();
 		myKeyListener->onKeyPressed = CC_CALLBACK_2(MapScene::onKeyPressed, this);
 
@@ -554,7 +569,6 @@ void MapScene::skill4(float dt)
 		addChild(SKILL4TIME, 6, 912);
 	}
 }
-
 
 void MapScene::heroIn(float dt)
 {
@@ -641,9 +655,14 @@ void MapScene::Tower2(float dt)
 					n = i; break;
 				}
 			}
-			if (n >= 1)
+			if (n > 1)
 			{
 				attactEnemy(Tower1_position, objectPositon, 1, 2044, 1023 + n);
+				return;
+			}
+			if (n == 1)
+			{
+				attactEnemy(Tower1_position, objectPositon, 1, 2044, 2047);
 				return;
 			}
 		}
@@ -660,7 +679,9 @@ void MapScene::Tower2(float dt)
 			if (getDistance(Tower1_position, objectPositon) <= range)
 			{
 				chosenFriend = s;
+				if (i!=1)
 				attactEnemy(Tower1_position, objectPositon, 1,2044,1023+i);
+				else attactEnemy(Tower1_position, objectPositon, 1, 2044, 2047);
 				return;
 			}
 		}
@@ -759,6 +780,63 @@ void MapScene::soldersMake2(float dt)
 		time++;
 	}
 }
+void MapScene::anti(float dt)
+{
+	object* antiHero = (object*)getChildByTag(2047);
+	auto aHero = Enemy.at(1);
+	Vec2 antiPos = antiHero->enemy->getPosition();
+	int minDis = 10000;
+	int range = 300;
+	int target=-1;
+	auto bloodLine = antiHero->Loading;
+	Vec2 destination = Vec2(500,420);
+	for (int i = 0; i <Friend.size(); i++)
+	{
+		Vec2 ourPos = Friend.at(i)->getPosition();
+
+		int distance = getDistance(antiPos, ourPos);
+		if (minDis > distance)
+		{
+			minDis = distance;
+			target = i;
+
+		}
+	}
+	if (minDis > range)
+	{
+		auto * move = MoveTo::create(getDistance(antiPos,destination)/50, destination);
+		auto* moveBlood = MoveTo::create(getDistance(antiPos, destination)/50,Vec2(destination.x,destination.y+50));
+		aHero->stopAllActions();
+		getDistance(antiPos, destination);
+		bloodLine->stopAllActions();
+		
+		aHero->runAction(move);
+		aHero->runAction(createAnimateH(2, "run", 7, 1));
+		bloodLine->runAction(moveBlood);
+	}
+	else if (minDis > range / 2)
+	{
+		aHero->stopAllActions();
+		bloodLine->stopAllActions();
+		aHero->runAction(createAnimateH(2, "run", 7, 1));
+		auto* Move = MoveTo::create(minDis / 50, Friend.at(target)->getPosition());
+		auto* MoveBlood = MoveTo::create(minDis/50, Vec2(Friend.at(target)->getPosition().x, Friend.at(target)->getPosition().y + 50));
+		aHero->runAction(Move);
+		bloodLine->runAction(MoveBlood);
+	}
+	else
+	{
+		aHero->stopAllActions();
+		aHero->runAction(createAnimateH(2, "att", 7, 1 ));
+		bloodLine->stopAllActions();
+		if (target > 1)
+			attactEnemy(antiPos, Friend.at(target)->getPosition(), 5,2047, 2046 + target);
+		if (target == 0)
+			attactEnemy(antiPos, Friend.at(target)->getPosition(),5, 2047, 2044);
+		if (target == 1)
+			attactEnemy(antiPos, Friend.at(target)->getPosition(), 5, 2047, 2046);
+	}
+}
 void MapScene::soldersContrl(float dt)
 {
 
@@ -796,7 +874,7 @@ void MapScene::soldersContrl(float dt)
 				if (minDis <= 100)
 				{
 					a->stopAllActions();
-					a->runAction(createAnimateS(4, "att", 14, 4,1));
+					a->runAction(createAnimateS(4, "att", 8, 1,-1));
 					bloodLine->stopAllActions();
 					if(min!=0)
 					attactEnemy(soldersPostion, Enemy.at(min)->getPosition(), i,2046+i,1023+min);
@@ -927,7 +1005,7 @@ void MapScene::soldersContrl(float dt)
 	}
 	if (Enemy.size() >= 2)
 	{
-		for (int i = 1; i < Enemy.size(); i++)
+		for (int i = 2; i < Enemy.size(); i++)
 		{
 			auto a = Enemy.at(i);
 			Size s = a->getContentSize();
@@ -1145,7 +1223,19 @@ void MapScene::finishAttack(const int tag1, const int tag2)
 			float cur = (float)solder2->blood*10;
 			solder2->Loading->setPercentage(cur);
 			if (solder2->blood <= 0)
-				solder2->enemy->setPosition(-2000, -2000);
+			{
+				if (tag2 == 2047)
+				{
+					solder2->blood = 10;
+					solder2->enemy->setPosition(Vec2(1460, 1030));
+					solder2->Loading->setPosition(Vec2(1460, 1080));
+					solder2->Loading->setPercentage(100.0);
+				}
+				else
+				{
+					removeChildByTag(tag2);
+				}
+			}
 		}
 		else
 		{
@@ -1164,8 +1254,21 @@ void MapScene::finishAttack(const int tag1, const int tag2)
 		solder2->blood--;
 		float cur = (float)solder2->blood * 10;
 		solder2->Loading->setPercentage(cur);
-		if(solder2->blood<=0)
-			solder2->enemy->setPosition(-2000, -2000);
+		if (solder2->blood <= 0)
+		{
+			if (tag2 == 2047)
+			{
+				solder2->blood = 10;
+				solder2->enemy->setPosition(Vec2(1860, 1030));
+				solder2->Loading->setPosition(Vec2(1860, 1080));
+			}
+			else
+			{
+				removeChildByTag(tag2);
+			}
+		}
+		
+	//		solder2->enemy->setPosition(-2000, -2000);
 	}
 }
 void MapScene::EnterHelloWorldScene(Ref *pSenderBack)
@@ -1178,6 +1281,40 @@ void MapScene::EnterHelloWorldScene(Ref *pSenderBack)
 	Director::getInstance()->replaceScene(TransitionFade::create(1.0f,HelloWorld::createScene()));
 }
 
+void MapScene::LevelCall(Ref *sender, Widget::TouchEventType controlevent)
+{
+	if (controlevent == Widget::TouchEventType::ENDED)
+	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
+		//战绩图标不可触发
+		Button *tmp1 = (Button *)this->getChildByTag(51);
+		tmp1->setTouchEnabled(false);
+		//商城图标不可触发
+		Button *tmp2 = (Button *)this->getChildByTag(50);
+		tmp2->setTouchEnabled(false);
+		//等级图标不可触发
+		Button *tmp3 = (Button *)this->getChildByTag(49);
+		tmp3->setTouchEnabled(false);
+
+	}
+}
+
+void MapScene::LevelBack(Ref *sender, Widget::TouchEventType controlevent)
+{
+	if (controlevent == Widget::TouchEventType::ENDED)
+	{
+		SimpleAudioEngine::getInstance()->playEffect("Touch.wav");
+		//恢复商城可触发
+		Button *tmp1 = (Button *)this->getChildByTag(50);
+		tmp1->setTouchEnabled(true);
+		//恢复战绩可触发
+		Button *tmp2 = (Button *)this->getChildByTag(51);
+		tmp2->setTouchEnabled(true);
+		//恢复等级可触发
+		Button *tmp3 = (Button *)this->getChildByTag(49);
+		tmp3->setTouchEnabled(true);
+	}
+}
 
 void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 {
@@ -1190,6 +1327,9 @@ void MapScene::Shopcall(Ref *sender, Widget::TouchEventType controlevent)
 		//商城图标不可触发
 		Button *tmp2 = (Button *)this->getChildByTag(50);
 		tmp2->setTouchEnabled(false);
+		//等级图标不可触发
+		Button *tmp3 = (Button *)this->getChildByTag(49);
+		tmp3->setTouchEnabled(false);
 
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -1356,6 +1496,9 @@ void MapScene::ZhanjiCall(Ref *sender, Widget::TouchEventType controlevent)
 		//商城图标不可触发
 		Button *tmp2 = (Button *)this->getChildByTag(50);
 		tmp2->setTouchEnabled(false);
+		//等级图标不可触发
+		Button *tmp3 = (Button *)this->getChildByTag(49);
+		tmp3->setTouchEnabled(false);
 
 		auto visibleSize = Director::getInstance()->getVisibleSize();
 		Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -1602,6 +1745,9 @@ void MapScene::ZhanjiBack(Ref *sender, Widget::TouchEventType controlevent)
 		//恢复战绩可触发
 		Button *tmp2 = (Button *)this->getChildByTag(51);
 		tmp2->setTouchEnabled(true);
+		//恢复等级可触发
+		Button *tmp3 = (Button *)this->getChildByTag(49);
+		tmp3->setTouchEnabled(true);
 	}
 }
 
@@ -2256,6 +2402,9 @@ void MapScene::ShopBack(Ref *sender, Widget::TouchEventType controlevent)
 		//恢复战绩可触发
 		Button *tmp2 = (Button *)this->getChildByTag(51);
 		tmp2->setTouchEnabled(true);
+		//恢复等级可触发
+		Button *tmp3 = (Button *)this->getChildByTag(49);
+		tmp3->setTouchEnabled(true);
 	}
 }
 //使用removebytag至关重要，byTag还可以提供访问

@@ -77,6 +77,10 @@ void object::start(int type, Vec2 position)
 	//	enemy->setDisplayFrame(frame);
 		blood = 10;
 	}
+	if (type == 5)
+	{
+		blood = 10;
+	}
 
 	enemy->setPosition(position);
 	Loading->setPosition(Vec2(position.x,position.y+50));

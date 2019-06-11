@@ -36,6 +36,7 @@ public:
 	void heroIn(float dt);
 	void Tower1(float dt);
 	void soldersMake(float dt);
+	void anti(float dt);
 	void soldersContrl(float dt);
 	void Tower2(float dt);
 	void soldersMake1(float dt);
@@ -58,6 +59,8 @@ public:
 	void ShopBack(Ref *sender, Widget::TouchEventType controlevent);
 	void ZhanjiCall(Ref *sender, Widget::TouchEventType controlevent);
 	void ZhanjiBack(Ref *sender, Widget::TouchEventType controlevent);
+	void LevelCall(Ref *sender, Widget::TouchEventType controlevent);
+	void LevelBack(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy1(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy2(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy3(Ref *sender, Widget::TouchEventType controlevent);
@@ -117,6 +120,7 @@ private:
 	Button *BuyButton41;
 	Button *BuyButton51;
 	Button *BuyButton61;
+	Button *LevelButton;
 	ProgressTimer *SKILL1TIME;
 	ProgressTimer *SKILL2TIME;
 	ProgressTimer *SKILL3TIME;
