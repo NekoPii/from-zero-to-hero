@@ -7,7 +7,16 @@ void heroPrint::initHeroSprite(int direction, cocos2d::Point currentPosition)
 	heroSprite = Sprite::create("hero_1_stand11.png");
 	heroSprite->setScale(1.0f);
 	heroSprite->setPosition(currentPosition);
-	blood = 20;
+	 maxBoold=500;
+	needExprience=40;
+	Aggressivity = 50;
+	Armor=200;
+	attack_speed=1.0;
+	magic=0;
+	magic_resistance=200;
+	range=75;
+	exprience=0;
+	blood = 500000; level = 1; speed = 75;
 	addChild(heroSprite);
 	heroSprite->runAction(this->createAnimate(direction, "stand", 7,MyHeroID));
 }
@@ -88,7 +97,7 @@ void heroPrint::heroMoveTo(cocos2d::Point position)
 	this->currentPosition = heroSprite->getPosition();
 	float distance = getDistance(this->currentPosition, position);
 	auto* animate = createAnimate(getDirection(this->currentPosition, position), "run", 7,MyHeroID);
-	auto* move = MoveTo::create((float)distance / 200, position);
+	auto* move = MoveTo::create((float)distance / speed, position);
 	auto* callFunc = CallFunc::create(CC_CALLBACK_0(heroPrint::heroResume, this));
 	auto* sequence = Sequence::create(move, callFunc, NULL);
 	heroSprite->runAction(animate);

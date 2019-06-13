@@ -37,10 +37,26 @@ public:
 	void Tower1(float dt);
 	void soldersMake(float dt);
 	void anti(float dt);
+	void myMagicF(float dt);
 	void soldersContrl(float dt);
 	void Tower2(float dt);
 	void soldersMake1(float dt);
 	void soldersMake2(float dt);
+	void soldersMake3(float dt);
+	void soldersMake4(float dt);
+	void soldersMake5(float dt);
+	void soldersMake6(float dt);
+	void soldersMake7(float dt);
+	void soldersMake8(float dt);
+	void soldersMake9(float dt);
+	void skillQ(float dt);
+	void skillW(float dt);
+	void skillE(float dt);
+	void skillR(float dt);
+	int timeQ = 0;
+	int timeW = 0;
+	int timeE = 0;
+	int timeR = 0;
 	void skill1(float dt);
 	void skill2(float dt);
 	void skill3(float dt);
@@ -75,9 +91,17 @@ public:
 	// implement the "static create()" method manually
 	cocos2d::Animate* createAnimateH(int direction, const char* action, int num, int id);
 	cocos2d::Animate* createAnimateS(int direction, const char* action, int num, int id,int loop);
+	cocos2d::Animate* createAnimateL();
+	cocos2d::Animate* createAnimateM(int id,int num,float t,int loop);
+	cocos2d::Animate* createAnimateM();
+
+	Sprite* myMagic;
+	Sprite* antiMagic;
 
 	SpriteFrameCache* frameCacheH;
 	SpriteFrameCache* frameCacheS;
+	SpriteFrameCache* frameCacheL;
+	SpriteFrameCache* frameCacheM;
 
 
 	
@@ -122,6 +146,7 @@ private:
 	ProgressTimer *SKILL2TIME;
 	ProgressTimer *SKILL3TIME;
 	ProgressTimer *SKILL4TIME;
+	ProgressTimer* EXPTIME;
 
 };
 

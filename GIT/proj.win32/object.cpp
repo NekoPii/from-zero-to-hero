@@ -56,30 +56,84 @@ void object::start(int type, Vec2 position)
 		addChild(enemy);
 		enemy->setScale(0.3);
 		//enemy->setScale(0.5f);
-		blood = 50;
+		maxBlood = 2000;
+		blood = 2000;
+		Aggressivity = 100;
+		Armor = 0;
+		attack_speed = 1.0;
+		 magic=0;
+		 magic_resistance=0;
+		 speed=0;
+		 level=18;
+		 range=300;
+		 exprience=10;
+		 gold = 500;
 	}
 	if (type == 2)
 	{
 		enemy = Sprite::create("protect.png");
 		addChild(enemy);
 		enemy->setScale(0.3);
-		blood = 50;
+		maxBlood = 2000;
+		blood = 2000;
+		Aggressivity = 100;
+		Armor = 0;
+		attack_speed = 1.0;
+		magic = 0;
+		magic_resistance = 0;
+		speed = 0;
+		level = 18;
+		range = 300;
+		exprience = 10;
+		gold = 500;
 	}
 	if (type == 3)
 	{
-	//	auto frame = SpriteFrame::create("solders2.png", Rect(0, 0, 39, 46));
-	//	enemy->setDisplayFrame(frame);
-		blood = 10;
+		//近战
+		maxBlood = 250;
+		blood = 250;
+		Aggressivity = 50;
+		Armor = 0;
+		attack_speed = 1.4;
+		magic = 0;
+		magic_resistance = 0;
+		speed = 50;
+		level = 1;
+		range = 75;
+		exprience = 10;
+		gold = 75;
 	}
 	if (type == 4)
 	{
-	//	auto frame = SpriteFrame::create("solders3.png", Rect(0, 0, 39, 46));
-	//	enemy->setDisplayFrame(frame);
-		blood = 10;
+		//远程
+		maxBlood = 150;
+		blood = 150;
+		Aggressivity = 75;
+		Armor = 0;
+		attack_speed = 1.4;
+		magic = 0;
+		magic_resistance = 0;
+		speed = 50;
+		level = 1;
+		range = 275;
+		exprience = 10;
+		gold = 50;
 	}
 	if (type == 5)
 	{
-		blood = 10;
+		//炮车
+		maxBlood = 500;
+		blood = 500;
+		Aggressivity = 75;
+		Armor = 0;
+		attack_speed = 1.4;
+		magic = 0;
+		magic_resistance = 0;
+		speed = 50;
+		level = 1;
+		range = 200;
+		exprience = 10;
+		gold = 50;
 	}
 
 	enemy->setPosition(position);

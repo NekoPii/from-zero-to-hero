@@ -12,6 +12,17 @@ public:
 	int type;
 	void start(int type, Vec2 osition);
 	int blood;
+	int maxBlood;
+	int Aggressivity;
+	int Armor;
+	float attack_speed;
+	int magic;
+	int magic_resistance;
+	int speed;
+	int level;
+	int range;
+	int exprience;
+	int gold;
 	void enemyDestory();
 	Sprite* enemy;
 	static object* createObject();
