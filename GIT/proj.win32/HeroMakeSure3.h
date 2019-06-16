@@ -7,6 +7,7 @@
 
 USING_NS_CC;
 USING_NS_CC_EXT;
+using namespace cocos2d::ui;
 
 class HeroMakeSure3 : public cocos2d::Layer
 {
@@ -16,12 +17,23 @@ public:
 	virtual bool init();
 	void EnterMapScene(Ref *pSenderEnter);
 	void ReturnHeroChoose(Ref *pSenderReturn);
-	void initHero3Stand();
-	cocos2d::Animate * createAnimateStand3(int num);
-
-
+	void displayskill1(Ref *sender, Widget::TouchEventType controlevent);
+	void displayskill2(Ref *sender, Widget::TouchEventType controlevent);
+	void displayskill3(Ref *sender, Widget::TouchEventType controlevent);
+	void displayskill4(Ref *sender, Widget::TouchEventType controlevent);
+	//void testcall(Ref *sender, Widget::TouchEventType controlevent);
+	cocos2d::Animate* createAnimateH(int direction, const char* action, int num, int id);
+	cocos2d::Animate* createAnimateM(int id, int num, float t, int loop);
 	// implement the "static create()" method manually
 	CREATE_FUNC(HeroMakeSure3);
+
+private:
+	Button *display1;
+	Button *display2;
+	Button *display3;
+	Button *display4;
+	SpriteFrameCache* frameCacheM;
+	SpriteFrameCache* frameCacheH;
 
 };
 

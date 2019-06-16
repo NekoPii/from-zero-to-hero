@@ -6,6 +6,8 @@
 #include "cocos-ext.h"
 #include "ui/CocosGUI.h"
 #include <vector>
+#include <stdio.h>
+#include <math.h>
 using namespace std;
 
 USING_NS_CC;
@@ -16,8 +18,12 @@ class MapScene : public cocos2d::Layer
 {
 public:
 	static cocos2d::Scene* createScene();
-
-
+	int myle = 1;
+	int yourle = 1;
+	int re=-1;
+	int rd=-1;
+	void rebuild(float dt);
+	void rebuildme(float dt);
 	TMXTiledMap* map;
 	TMXLayer* _colliable;
 	Vec2 touchLocation;
@@ -37,14 +43,24 @@ public:
 	void Tower1(float dt);
 	void soldersMake(float dt);
 	void anti(float dt);
+	void myMagicF(float dt);
 	void soldersContrl(float dt);
 	void Tower2(float dt);
-	void soldersMake1(float dt);
-	void soldersMake2(float dt);
+	void skillQ(float dt);
+	void skillW(float dt);
+	void skillE(float dt);
+	void skillR(float dt);
+	void increaseGold(float dt);
+	int timeQ = 0;
+	int timeW = 0;
+	int timeE = 0;
+	int timeR = 0;
 	void skill1(float dt);
 	void skill2(float dt);
 	void skill3(float dt);
 	void skill4(float dt);
+	void quanshui(float dt);
+	void refreshAb(float dt);
 	float getDistance(Vec2 me, Vec2 you);
 	Sprite* chosenEnemy;
 	Sprite* chosenFriend;
@@ -59,8 +75,6 @@ public:
 	void ShopBack(Ref *sender, Widget::TouchEventType controlevent);
 	void ZhanjiCall(Ref *sender, Widget::TouchEventType controlevent);
 	void ZhanjiBack(Ref *sender, Widget::TouchEventType controlevent);
-	void LevelCall(Ref *sender, Widget::TouchEventType controlevent);
-	void LevelBack(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy1(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy2(Ref *sender, Widget::TouchEventType controlevent);
 	void Shopbuy3(Ref *sender, Widget::TouchEventType controlevent);
@@ -73,14 +87,26 @@ public:
 	void Buyit4(Ref *sender, Widget::TouchEventType controlevent);
 	void Buyit5(Ref *sender, Widget::TouchEventType controlevent);
 	void Buyit6(Ref *sender, Widget::TouchEventType controlevent);
+	void GameOver();
+
 
 	// implement the "static create()" method manually
 	cocos2d::Animate* createAnimateH(int direction, const char* action, int num, int id);
 	cocos2d::Animate* createAnimateS(int direction, const char* action, int num, int id,int loop);
+	cocos2d::Animate* createAnimateL();
+	cocos2d::Animate* createAnimateM(int id,int num,float t,int loop);
+	cocos2d::Animate* createAnimateM();
+
+	Sprite* myMagic;
+	Sprite* antiMagic;
+	Sprite* ta;
 
 	SpriteFrameCache* frameCacheH;
 	SpriteFrameCache* frameCacheS;
+	SpriteFrameCache* frameCacheL;
+	SpriteFrameCache* frameCacheM;
 
+	int lup=0;
 
 	
 //	void dieAni(object *die);
@@ -120,11 +146,11 @@ private:
 	Button *BuyButton41;
 	Button *BuyButton51;
 	Button *BuyButton61;
-	Button *LevelButton;
 	ProgressTimer *SKILL1TIME;
 	ProgressTimer *SKILL2TIME;
 	ProgressTimer *SKILL3TIME;
 	ProgressTimer *SKILL4TIME;
+	ProgressTimer* EXPTIME;
 
 };
 

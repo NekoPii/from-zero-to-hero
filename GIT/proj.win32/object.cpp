@@ -20,7 +20,7 @@ bool object::init()
 	{
 		return false;
 	}
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i <4000; i++)
 	{
 		int n = 0;
 		use.push_back(n);
@@ -31,10 +31,10 @@ bool object::init()
 void object::objectInit()
 {
 	this->type = 0;
-	enemy = Sprite::create("gold.png");
+	enemy = Sprite::create("UI/gold.png");
 	enemy->setPosition(Vec2(-100, -100));
 	addChild(enemy);
-	progressSprite = Sprite::create("BloodLine.png");
+	progressSprite = Sprite::create("UI/BloodLine.png");
 	Loading = ProgressTimer::create(progressSprite);
 	addChild(Loading);
 	Loading->setType(kCCProgressTimerTypeBar);
@@ -42,45 +42,131 @@ void object::objectInit()
 	Loading->setMidpoint(Vec2(0, 0));
 	Loading->setBarChangeRate(Vec2(1.0, 0));
 	Loading->setPercentage(100);
-	
-	
-	
 }
 void object::start(int type, Vec2 position)
 {
 	this->type = type;
 	if (type == 1)
 	{
-		
-		enemy = Sprite::create("protect.png");
+		enemy = Sprite::create("MAP/protect.png");
 		addChild(enemy);
 		enemy->setScale(0.3);
 		//enemy->setScale(0.5f);
-		blood = 50;
+		maxBlood = 5000;
+		blood = 5000;
+		Aggressivity = 300;
+		Armor = 0;
+		attack_speed = 1.0;
+		 magic=0;
+		 magic_resistance=0;
+		 speed=0;
+		 level=18;
+		 range=300;
+		 exprience=10;
+		 gold = 500;
 	}
 	if (type == 2)
 	{
-		enemy = Sprite::create("protect.png");
+		enemy = Sprite::create("MAP/protect.png");
+		CCRect rect = enemy->boundingBox();
+		rect = CCRect(0, 0, 126, 167);
 		addChild(enemy);
 		enemy->setScale(0.3);
-		blood = 50;
+		maxBlood = 5000;
+		blood = 5000;
+		Aggressivity = 300;
+		Armor = 0;
+		attack_speed = 1.0;
+		magic = 0;
+		magic_resistance = 0;
+		speed = 0;
+		level = 18;
+		range = 300;
+		exprience = 10;
+		gold = 500;
 	}
 	if (type == 3)
 	{
-	//	auto frame = SpriteFrame::create("solders2.png", Rect(0, 0, 39, 46));
-	//	enemy->setDisplayFrame(frame);
-		blood = 10;
+		//近战
+		maxBlood = 250;
+		blood = 250;
+		Aggressivity = 50;
+		Armor = 0;
+		attack_speed = 1.4;
+		magic = 0;
+		magic_resistance = 0;
+		speed = 50;
+		level = 1;
+		range = 75;
+		exprience = 10;
+		gold = 75;
 	}
 	if (type == 4)
 	{
-	//	auto frame = SpriteFrame::create("solders3.png", Rect(0, 0, 39, 46));
-	//	enemy->setDisplayFrame(frame);
-		blood = 10;
+		//远程
+		maxBlood = 150;
+		blood = 150;
+		Aggressivity = 75;
+		Armor = 0;
+		attack_speed = 1.4;
+		magic = 0;
+		magic_resistance = 0;
+		speed = 50;
+		level = 1;
+		range = 275;
+		exprience = 10;
+		gold = 50;
 	}
+	if (type == 5)
+	{
+		//炮车
+		maxBlood = 500;
+		blood = 500;
+		Aggressivity = 75;
+		Armor = 0;
+		attack_speed = 1.4;
+		magic = 0;
+		magic_resistance = 0;
+		speed = 50;
+		level = 1;
+		range = 200;
+		exprience = 10;
+		gold = 50;
+	}
+	if (type == 6)
+	{
+		//英雄
+		expsp = Sprite::create("UI/level.png");
+		expcir = ProgressTimer::create(expsp);
+		addChild(expcir);
+		expcir->setType(kCCProgressTimerTypeRadial);
+		expcir->setScale(0.35f);
+		expcir->setPercentage(0);
 
+
+		CCString* levCCStr = CCString::createWithFormat("%d", level);
+		std::string levStr = levCCStr->getCString();
+		lev = Label::create(levStr, "Arial", 30);
+		addChild(lev);
+
+		expcir->setPosition(Vec2(enemy->getPosition().x - 50, enemy->getPosition().y + 50));
+		lev->setPosition(enemy->getPosition().x - 50, enemy->getPosition().y + 50);
+
+		maxBlood = 2000;
+		blood = 2000;
+		Aggressivity = 75;
+		Armor = 200;
+		attack_speed = 1.4;
+		magic = 0;
+		magic_resistance = 200;
+		speed = 50;
+		level = 1;
+		range = 200;
+		exprience = 10;
+		gold = 50;
+	}
 	enemy->setPosition(position);
 	Loading->setPosition(Vec2(position.x,position.y+50));
-	
 }
 void object::attactEnemy(Vec2 pos ,Vec2 Epos,int num)
 {
@@ -119,9 +205,7 @@ void object::enemyDestory()
 	}
 	else
 	{
-		// 敌机被取消
 		CCLOG("dead");
-		// 将其瞬移到屏幕外面，看上去就好像是消失了一样
 		enemy->stopAllActions();
 		enemy->setPosition(0, -200);
 		type = 0;

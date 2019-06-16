@@ -7,8 +7,72 @@ void heroPrint::initHeroSprite(int direction, cocos2d::Point currentPosition)
 	heroSprite = Sprite::create("hero_1_stand11.png");
 	heroSprite->setScale(1.0f);
 	heroSprite->setPosition(currentPosition);
-	blood = 20;
+	progressSprite = Sprite::create("UI/BloodLine.png");
+	Loading = ProgressTimer::create(progressSprite);
+	addChild(Loading);
+	Loading->setType(kCCProgressTimerTypeBar);
+	Loading->setScale(0.35f);
+	Loading->setMidpoint(Vec2(0, 0));
+	Loading->setBarChangeRate(Vec2(1.0, 0));
+	Loading->setPercentage(100);
+
+
+	expsp = Sprite::create("UI/level.png");
+	expcir = ProgressTimer::create(expsp);
+	addChild(expcir);
+	expcir->setType(kCCProgressTimerTypeRadial);
+	expcir->setScale(0.35f);
+	expcir->setPercentage(0);
+
+
+	CCString* levCCStr = CCString::createWithFormat("%d", level);
+	std::string levStr = levCCStr->getCString();
+	lev = Label::create(levStr, "Arial", 30);
+	addChild(lev);
+	
+	if (MyHeroID == 1)
+	{
+		maxBlood = 500;
+		needExprience = 40;
+		Aggressivity = 50;
+		Armor = 200;
+		attack_speed = 1.0;
+		magic = 0;
+		range = 75;
+		exprience = 0;
+		blood = 500; level = 1; speed = 75;
+	}
+	if (MyHeroID == 2)
+	{
+		maxBlood = 500;
+		needExprience = 40;
+		Aggressivity = 50;
+		Armor = 200;
+		attack_speed = 1.0;
+		magic = 0;
+		range = 200;
+		exprience = 0;
+		blood = 500; level = 1; speed = 75;
+	}
+	if (MyHeroID == 3)
+	{
+		maxBlood = 500;
+		needExprience = 40;
+		Aggressivity = 50;
+		Armor = 200;
+		attack_speed = 1.0;
+		magic = 0;
+		magic_resistance = 200;
+		range = 200;
+		exprience = 0;
+		blood = 500; level = 1; speed = 75;
+	}
 	addChild(heroSprite);
+
+
+	Loading->setPosition(Vec2(herosPosition().x, herosPosition().y + 50));
+	expcir->setPosition(Vec2(herosPosition().x-50,herosPosition().y + 50));
+	lev->setPosition(Vec2(herosPosition().x - 50, herosPosition().y + 50));
 	heroSprite->runAction(this->createAnimate(direction, "stand", 7,MyHeroID));
 }
 
@@ -88,7 +152,7 @@ void heroPrint::heroMoveTo(cocos2d::Point position)
 	this->currentPosition = heroSprite->getPosition();
 	float distance = getDistance(this->currentPosition, position);
 	auto* animate = createAnimate(getDirection(this->currentPosition, position), "run", 7,MyHeroID);
-	auto* move = MoveTo::create((float)distance / 200, position);
+	auto* move = MoveTo::create((float)distance / speed, position);
 	auto* callFunc = CallFunc::create(CC_CALLBACK_0(heroPrint::heroResume, this));
 	auto* sequence = Sequence::create(move, callFunc, NULL);
 	heroSprite->runAction(animate);
